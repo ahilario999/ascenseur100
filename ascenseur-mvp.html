@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>L'ASCENSEUR — 6 Chapeaux du Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      width: 100vw; height: 100vh;
+      background: #070707;
+      color: #b8b8b8;
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    /* ===== CCTV : SCANLINES ===== */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 2px,
+        rgba(0,0,0,0.16) 2px, rgba(0,0,0,0.16) 4px
+      );
+      pointer-events: none; z-index: 9998;
+    }
+    /* ===== CCTV : VIGNETTE ===== */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.75) 100%);
+      pointer-events: none; z-index: 9997;
+    }
+    /* ===== NOISE LINE ===== */
+    .noise-line {
+      position: fixed; left: 0; right: 0; height: 2px;
+      background: rgba(255,255,255,0.022);
+      z-index: 9995; pointer-events: none;
+      animation: noise-travel 9s linear infinite;
+    }
+    @keyframes noise-travel { 0% { top: -2px; } 100% { top: 100vh; } }
+
+    /* ===== HUD CCTV ===== */
+    #cctv-hud {
+      position: fixed; inset: 0; z-index: 9996;
+      pointer-events: none; padding: 12px 16px;
+      font-size: 15px; color: rgba(190,190,190,0.5);
+      letter-spacing: 0.07em;
+    }
+    #hud-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    #hud-bottom {
+      position: absolute; bottom: 12px; left: 16px; right: 16px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .rec-dot {
+      display: inline-block; width: 7px; height: 7px;
+      border-radius: 50%; background: #c0c0c0; margin-right: 4px;
+      animation: rec-blink 1.3s ease-in-out infinite;
+    }
+    @keyframes rec-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.07; } }
+    .signal-bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+    .signal-bar { width: 4px; background: rgba(190,190,190,0.4); }
+    .signal-bar:nth-child(1) { height: 4px; }
+    .signal-bar:nth-child(2) { height: 7px; }
+    .signal-bar:nth-child(3) { height: 10px; }
+    .signal-bar:nth-child(4) { height: 14px; }
+
+    /* ===== SCREEN MANAGEMENT ===== */
+    .screen {
+      position: fixed; inset: 0;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100; padding: 20px; overflow-y: auto;
+    }
+    .screen.active {
+      display: flex;
+      animation: screen-cut 0.3s ease-out;
+    }
+    @keyframes screen-cut {
+      0% { opacity: 0; } 12% { opacity: 0.05; }
+      30% { opacity: 0; } 55% { opacity: 0.03; }
+      100% { opacity: 1; }
+    }
+
+    /* ===== BOOT ===== */
+    #screen-boot { background: #000; align-items: flex-start; justify-content: flex-start; padding: 30px; }
+    .boot-pre { font-size: 15px; line-height: 1.9; white-space: pre-wrap; color: #666; }
+    .boot-ok  { color: #aaa; }
+    .boot-dim { color: #383838; }
+
+    /* ===== TITRE ===== */
+    #screen-title { background: #050505; gap: 28px; }
+    .title-eyebrow { font-size: 15px; letter-spacing: 0.45em; color: #505050; text-align: center; }
+    .title-main {
+      font-family: 'Oswald', sans-serif; font-weight: 700;
+      font-size: clamp(52px, 13vw, 100px);
+      letter-spacing: 0.08em; color: #e0e0e0;
+      line-height: 1; text-align: center;
+      animation: glitch-title 4s infinite;
+    }
+    @keyframes glitch-title {
+      0%, 88%, 100% { text-shadow: none; transform: translate(0); clip-path: none; }
+      89% { text-shadow: -3px 0 rgba(255,255,255,0.28), 3px 0 rgba(150,150,150,0.18); transform: translate(-2px,0); clip-path: inset(15% 0 70% 0); }
+      90% { text-shadow: 4px 0 rgba(200,200,200,0.22); transform: translate(3px,0); clip-path: none; }
+      91% { text-shadow: none; transform: translate(0); }
+      92% { text-shadow: -2px 0 rgba(255,255,255,0.38); transform: translate(-1px,1px); clip-path: inset(65% 0 15% 0); }
+      93% { text-shadow: none; transform: translate(0); clip-path: none; }
+    }
+    .title-sub { font-size: 15px; letter-spacing: 0.3em; color: #3e3e3e; text-align: center; }
+
+    /* ===== ANIMATION C-ASCENSEUR ===== */
+    /* Le wrapper coupe le C quand il est sous la ligne — crée l'effet "L'AS ENSEUR" */
+    .title-c-clip {
+      display: inline-block;
+      overflow: hidden;
+      line-height: 1em;
+      vertical-align: bottom;
+      /* padding-top crée un espace de débordement vers le haut pour l'overshoot ;
+         margin-top négatif compense pour garder l'alignement du mot intact */
+      padding-top: 0.38em;
+      margin-top: -0.38em;
+    }
+    /* Le C reste caché sous la ligne jusqu'au déclenchement JS */
+    .title-c-letter {
+      display: inline-block;
+      transform: translateY(130%); /* position de départ : sous la zone de clip */
+    }
+    /* La classe .animating est ajoutée par JS 1s après l'apparition du titre */
+    .title-c-letter.animating {
+      animation: c-monte-ascenseur 0.92s linear forwards;
+    }
+    /* Montée rapide → dépasse vers le haut (overshoot) → redescend → petit rebond → pose */
+    @keyframes c-monte-ascenseur {
+      0%   { transform: translateY(130%);  }   /* départ sous la ligne */
+      58%  { transform: translateY(-28%);  }   /* dépasse le haut du mot */
+      74%  { transform: translateY(7%);    }   /* redescend trop bas */
+      87%  { transform: translateY(-6%);   }   /* second micro-rebond */
+      100% { transform: translateY(0%);    }   /* pose finale */
+    }
+
+    /* ===== BOUTONS ===== */
+    .btn {
+      font-family: 'Share Tech Mono', monospace; font-size: 15px;
+      letter-spacing: 0.2em; padding: 13px 28px;
+      background: transparent; border: 1px solid #444;
+      color: #b0b0b0; cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .btn:hover { border-color: #aaa; color: #fff; background: rgba(255,255,255,0.04); }
+    .btn:active { transform: scale(0.97); }
+    .btn.primary { border-color: #777; color: #d8d8d8; }
+    .btn.ghost   { border-color: #303030; color: #555; }
+
+    /* ===== BRIEF ===== */
+    #screen-brief {
+      background: #050505; gap: 18px;
+      align-items: center; justify-content: center;
+      padding: 40px 20px;
+    }
+    .brief-wrap { width: 100%; max-width: 580px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+    .dossier-box { border: 1px solid #2a2a2a; padding: 16px; position: relative; }
+    .dossier-box::before {
+      content: attr(data-label);
+      position: absolute; top: -6px; left: 14px;
+      background: #050505; padding: 0 8px;
+      font-size: 12px; letter-spacing: 0.35em; color: #505050;
+    }
+    .dossier-title { font-family: 'Oswald', sans-serif; font-weight: 300; font-size: 26px; letter-spacing: 0.2em; color: #3e3e3e; }
+    .dossier-id-line { font-size: 15px; color: #404040; margin-top: 5px; }
+    .field-label  { font-size: 13px; letter-spacing: 0.35em; color: #505050; display: block; margin-bottom: 8px; }
+    .field-input {
+      width: 100%; background: rgba(255,255,255,0.02);
+      border: 1px solid #1e1e1e; border-bottom-color: #4a4a4a;
+      color: #c0c0c0; font-family: 'Share Tech Mono', monospace;
+      font-size: 15px; padding: 11px; resize: vertical;
+      min-height: 80px; outline: none; transition: border-color .2s;
+    }
+    .field-input:focus { border-color: #606060; background: rgba(255,255,255,0.04); }
+    .field-input::placeholder { color: #343434; }
+    .field-input.single { min-height: 44px; height: 44px; resize: none; }
+    .field-foot { display: flex; justify-content: space-between; align-items: center; }
+    .muted { font-size: 13px; color: #404040; letter-spacing: 0.2em; }
+
+    /* ===== ASCENSEUR ===== */
+    #screen-elevator {
+      background: #030303; gap: 0;
+      justify-content: center; align-items: center;
+      overflow: hidden;
+    }
+    /* Lignes verticales de la gaine */
+    #screen-elevator::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent, transparent calc(100% / 7 - 1px),
+          rgba(255,255,255,0.025) calc(100% / 7 - 1px), rgba(255,255,255,0.025) calc(100% / 7)
+        );
+      pointer-events: none;
+    }
+    .elev-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 2; }
+    .elev-floor-label { font-size: 15px; letter-spacing: 0.5em; color: #363636; }
+    .elev-floor-num {
+      font-family: 'Oswald', sans-serif; font-weight: 700;
+      font-size: clamp(80px, 22vw, 160px); color: #d8d8d8; line-height: 1;
+      text-shadow: 0 0 60px rgba(200,200,200,0.07);
+    }
+    .elev-destination { font-size: 15px; letter-spacing: 0.28em; color: #363636; margin-top: 4px; }
+    .elev-divider { width: 50px; height: 1px; background: #1a1a1a; margin: 8px 0; }
+    .elev-status { font-size: 15px; letter-spacing: 0.22em; color: #363636; animation: status-blink 1s ease-in-out infinite; }
+    @keyframes status-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+    /* ===== PERSONA — layout plein écran ===== */
+    #screen-persona {
+      background: #000; padding: 0; gap: 0;
+      overflow: hidden;
+    }
+    /* Quand actif : block au lieu de flex pour que position:absolute fonctionne */
+    #screen-persona.active {
+      display: block;
+      animation: persona-slide-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    #screen-persona.skip-slide.active {
+      animation: screen-cut 0.3s ease-out;
+    }
+    @keyframes persona-slide-up {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0%);   }
+    }
+
+    /* Vidéo en fond plein écran */
+    .persona-cam-view {
+      position: absolute; inset: 0;
+      background: #050505; overflow: hidden;
+      z-index: 1;
+    }
+    .cctv-video {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center center;
+      display: block;
+      filter: saturate(0.4) contrast(1.12) brightness(0.82);
+      /* Couche GPU dédiée — évite que le décodage vidéo partage le thread de rendu */
+      will-change: transform;
+      transform: translateZ(0);
+    }
+
+    /* ===== OVERLAY SVG CCTV ===== */
+    .cctv-svg-overlay {
+      position: absolute; inset: 0;
+      z-index: 14; pointer-events: none;
+      width: 100%; height: 100%;
+    }
+    .cctv-svg-overlay svg {
+      width: 100%; height: 100%;
+      opacity: 0.55;
+      /* Filtre néon statique — le filter ne bouge PAS pour éviter la recomposition à chaque frame */
+      filter:
+        drop-shadow(0 0 1px #6FBE52)
+        drop-shadow(0 0 5px rgba(111, 190, 82, 0.65))
+        drop-shadow(0 0 12px rgba(111, 190, 82, 0.35));
+      /* Seule l'opacité s'anime — property bon marché sur GPU composite layer */
+      animation: crt-flicker 5.5s ease-in-out infinite;
+      will-change: opacity;
+    }
+    /* Légère instabilité du faisceau — opacité seulement (pas de filter) */
+    @keyframes crt-flicker {
+      0%,  100% { opacity: 0.55; }
+      18%        { opacity: 0.48; }
+      35%        { opacity: 0.60; }
+      62%        { opacity: 0.50; }
+      80%        { opacity: 0.57; }
+    }
+    /* Gel d'image — intensité néon maximale (filter mis à jour une seule fois) */
+    .freeze-active .cctv-svg-overlay svg {
+      opacity: 0.82;
+      filter:
+        drop-shadow(0 0 2px #a8ff6a)
+        drop-shadow(0 0 7px rgba(111, 190, 82, 0.90))
+        drop-shadow(0 0 20px rgba(111, 190, 82, 0.55))
+        drop-shadow(0 0 40px rgba(111, 190, 82, 0.25));
+      animation: none;
+    }
+    /* Pendant la lecture vidéo : SVG data-stream suspendu pour libérer le thread */
+    .video-playing .cctv-data-group {
+      animation-play-state: paused;
+    }
+    .video-playing .cctv-svg-overlay svg {
+      animation-play-state: paused;
+    }
+    /* Animation subtile des lignes de données à droite */
+    @keyframes data-scroll {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-15.3px); } /* 1 ligne de hauteur */
+    }
+    .cctv-data-group {
+      animation: data-scroll 0.8s steps(1) infinite;
+    }
+
+    /* Detection boxes */
+    .det-face {
+      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+      width: 80px; height: 80px; border: 1px solid rgba(200,200,200,0.25);
+      pointer-events: none; z-index: 5;
+    }
+    .det-body {
+      position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+      width: 140px; height: 80%; border: 1px solid rgba(200,200,200,0.1);
+      pointer-events: none; z-index: 5;
+    }
+    .det-face::before { content:''; position:absolute; top:-1px; left:-1px; width:10px; height:10px; border-top:2px solid rgba(200,200,200,0.55); border-left:2px solid rgba(200,200,200,0.55); }
+    .det-face::after  { content:''; position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-bottom:2px solid rgba(200,200,200,0.55); border-right:2px solid rgba(200,200,200,0.55); }
+    .det-label { position:absolute; top:-16px; left:0; font-size:8px; color:rgba(200,200,200,0.4); letter-spacing:0.1em; white-space:nowrap; }
+
+    /* Étiquette nom persona — en haut à gauche */
+    .persona-overlay-bottom {
+      position: absolute; bottom: auto; top: 0; left: 0; right: 0;
+      padding: 40px 18px 16px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%);
+      display: flex; justify-content: space-between; align-items: flex-start;
+      pointer-events: none; z-index: 8;
+    }
+    .p-nom   { font-family:'Oswald',sans-serif; font-weight:700; font-size:22px; letter-spacing:0.2em; color:#e8e8e8; }
+    .p-titre { font-size:13px; letter-spacing:0.18em; color:#888; }
+    .p-chapeau { font-size:13px; letter-spacing:0.12em; color:#777; border:1px solid rgba(255,255,255,0.15); padding:3px 8px; }
+    .cam-label { position:absolute; top:10px; left:14px; font-size:13px; color:rgba(200,200,200,0.35); pointer-events:none; z-index:9; }
+    .cam-floor { position:absolute; top:10px; right:14px; font-size:13px; color:rgba(200,200,200,0.35); pointer-events:none; z-index:9; }
+
+    /* Badge gel d'image */
+    .freeze-badge {
+      position: absolute; top: 36px; left: 50%; transform: translateX(-50%);
+      font-size: 13px; letter-spacing: 0.35em; color: rgba(200,200,200,0.55);
+      border: 1px solid rgba(200,200,200,0.2); padding: 2px 12px;
+      display: none; pointer-events: none; z-index: 10;
+      animation: status-blink 1.2s ease-in-out infinite;
+    }
+    .freeze-badge.visible { display: block; }
+
+    /* Dialogue en overlay bas — gradient sombre remontant */
+    .persona-dialog {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      z-index: 20;
+      padding: 60px 20px 20px;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.97) 0%,
+        rgba(0,0,0,0.88) 55%,
+        rgba(0,0,0,0.3) 85%,
+        transparent 100%
+      );
+      display: flex; flex-direction: column; gap: 10px;
+      max-height: 60vh;
+      overflow-y: auto;
+      /* centrer sur grands écrans */
+      max-width: 720px;
+      margin: 0 auto;
+      /* mais rester collé en bas */
+      right: 0; left: 0;
+    }
+    /* hack pour que le gradient couvre bien tout le bas même sur large */
+    #screen-persona::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 60vh;
+      background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, transparent 100%);
+      z-index: 19; pointer-events: none;
+    }
+
+    .dialog-protocol { font-size: 13px; letter-spacing: 0.3em; color: rgba(150,150,150,0.6); }
+
+    /* Chat — style sous-titres avec fond semi-opaque */
+    #chat-log { display: flex; flex-direction: column; gap: 8px; }
+    .chat-msg { max-width: 90%; display: flex; flex-direction: column; gap: 2px; }
+    .chat-msg.persona { align-self: flex-start; }
+    .chat-msg.player  { align-self: flex-end; text-align: right; }
+    .msg-from { font-size: 12px; letter-spacing: 0.3em; margin-bottom: 2px; }
+    .msg-from.persona-from { color: rgba(180,180,180,0.5); }
+    .msg-from.player-from  { color: rgba(130,130,130,0.5); text-align: right; }
+    .msg-bubble { padding: 8px 12px; font-size: 19px; line-height: 1.7; }
+    .chat-msg.persona .msg-bubble { color: #d0d0d0; border-left: 2px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); }
+    .chat-msg.player  .msg-bubble { color: #888; border-right: 2px solid rgba(255,255,255,0.08); font-style: italic; }
+
+    /* Champ réponse */
+    #response-section { display: none; flex-direction: column; gap: 8px; margin-top: 6px; }
+    /* Conteneur relatif pour positionner le point vert */
+    .response-wrap { position: relative; }
+    /* Point vert actif — indicateur d'écoute */
+    .input-ready-dot {
+      position: absolute; top: -6px; right: -6px;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #6FBE52;
+      box-shadow: 0 0 4px rgba(111,190,82,0.9), 0 0 10px rgba(111,190,82,0.5);
+      animation: dot-ready-blink 2.2s ease-in-out infinite;
+      z-index: 30;
+    }
+    @keyframes dot-ready-blink {
+      0%,  100% { opacity: 1;    box-shadow: 0 0 4px rgba(111,190,82,0.9), 0 0 10px rgba(111,190,82,0.5); }
+      45%        { opacity: 0.15; box-shadow: 0 0 2px rgba(111,190,82,0.3); }
+      55%        { opacity: 0.15; box-shadow: 0 0 2px rgba(111,190,82,0.3); }
+    }
+    .response-area {
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-bottom-color: rgba(255,255,255,0.3);
+      color: #c8c8c8; font-family: 'Share Tech Mono', monospace;
+      font-size: 15px; padding: 11px; resize: none;
+      min-height: 72px; outline: none; transition: border-color .2s;
+      backdrop-filter: blur(4px);
+    }
+    .response-area:focus { border-color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.75); }
+    .response-area::placeholder { color: rgba(255,255,255,0.18); }
+    .dialog-foot { display: flex; justify-content: space-between; align-items: center; }
+    .char-count { font-size: 13px; color: rgba(150,150,150,0.4); letter-spacing: 0.15em; }
+
+    /* ===== ÉVALUATION ===== */
+    #screen-evaluation {
+      background: #040404; padding: 40px 20px; gap: 0;
+      align-items: center; justify-content: center;
+    }
+    .eval-card {
+      width: 100%; max-width: 600px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .eval-header {
+      flex: 0 0 auto; padding: 13px 20px;
+      border: 1px solid #181818; border-bottom: none;
+      font-size: 13px; letter-spacing: 0.3em; color: #424242;
+      display: flex; justify-content: space-between;
+    }
+    .eval-body {
+      padding: 24px 20px;
+      border: 1px solid #181818;
+      width: 100%;
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    .eval-loading { display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 50px 0; }
+    .loading-dots { display: flex; gap: 7px; }
+    .loading-dot { width: 7px; height: 7px; border-radius: 50%; background: #404040; animation: dot-bounce 1.4s ease-in-out infinite; }
+    .loading-dot:nth-child(2) { animation-delay: .2s; }
+    .loading-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes dot-bounce { 0%,80%,100%{transform:scale(1);background:#404040} 40%{transform:scale(1.4);background:#909090} }
+    .loading-text { font-size: 15px; letter-spacing: 0.3em; color: #404040; animation: status-blink 1.5s ease-in-out infinite; }
+    .eval-response { display: none; flex-direction: column; gap: 16px; }
+    .eval-verdict  { font-size: 13px; letter-spacing: 0.3em; color: #505050; }
+    .eval-text     { font-size: 15px; line-height: 1.85; color: #a0a0a0; padding: 14px 16px; border-left: 2px solid #282828; font-style: italic; }
+    .eval-decision { font-size: 15px; letter-spacing: 0.18em; padding: 10px 14px; border: 1px solid #282828; color: #606060; }
+    .eval-decision.pass  { border-color: #525252; color: #b0b0b0; }
+    .eval-decision.retry { border-color: #2e2e2e; color: #606060; }
+    .eval-actions  { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ===== RÉSUMÉ ===== */
+    #screen-summary {
+      background: #040404; padding: 0; gap: 0;
+      align-items: flex-start; justify-content: flex-start; overflow-y: auto;
+    }
+    .summary-wrap { max-width: 600px; width: 100%; margin: 0 auto; padding: 60px 20px; display: flex; flex-direction: column; gap: 20px; }
+    .summary-box { border: 1px solid #242424; padding: 18px; position: relative; }
+    .summary-box::before { content: attr(data-label); position: absolute; top: -6px; left: 14px; background: #040404; padding: 0 8px; font-size: 12px; letter-spacing: 0.3em; color: #464646; }
+    .summary-h1 { font-family: 'Oswald', sans-serif; font-weight: 300; font-size: 28px; letter-spacing: 0.2em; color: #acacac; }
+    .summary-meta-line { font-size: 13px; color: #464646; margin-top: 6px; }
+    .result-card { border: 1px solid #1c1c1c; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .result-head { display: flex; justify-content: space-between; align-items: flex-start; }
+    .result-name  { font-size: 15px; letter-spacing: 0.2em; color: #787878; }
+    .result-badge { font-size: 13px; letter-spacing: 0.15em; padding: 2px 8px; border: 1px solid; }
+    .badge-pass   { border-color: #484848; color: #888; }
+    .badge-retry  { border-color: #303030; color: #505050; }
+    .result-response { font-size: 15px; color: #525252; line-height: 1.65; font-style: italic; }
+    .result-eval  { font-size: 15px; color: #646464; line-height: 1.7; padding-top: 8px; border-top: 1px solid #181818; }
+    .mvp-notice   { border: 1px dashed #242424; padding: 14px; font-size: 15px; color: #464646; line-height: 2; letter-spacing: 0.05em; }
+
+    /* ===== BOARDROOM ===== */
+    #screen-boardroom.active, #screen-verdict.active {
+      display: block; animation: persona-slide-up 0.65s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    #screen-boardroom .cctv-video,
+    #screen-verdict   .cctv-video {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    /* Fond photo salle */
+    .board-bg-wrap { position: absolute; inset: 0; overflow: hidden; }
+    .board-bg-img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: saturate(0.45) brightness(0.6);
+      transform-origin: center 30%;
+      animation: board-slow-zoom 12s ease-in forwards;
+    }
+    @keyframes board-slow-zoom {
+      from { transform: scale(1.0); }
+      to   { transform: scale(1.22); }
+    }
+    /* Overlay centré sur la salle */
+    .board-overlay {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 16px; padding: 24px 20px;
+    }
+    /* Écran de projection — titre du concept */
+    .board-projection {
+      width: 100%; max-width: 600px;
+      background: rgba(220,218,255,0.06);
+      border: 1px solid rgba(180,180,220,0.10);
+      padding: 18px 22px;
+      animation: screen-cut 0.5s ease-out;
+    }
+    .board-proj-label {
+      font-size: 11px; letter-spacing: 0.5em; color: #3a3a52;
+      margin-bottom: 8px;
+    }
+    .board-proj-title {
+      font-family: 'Oswald', sans-serif; font-weight: 300;
+      font-size: 22px; letter-spacing: 0.2em; color: #7878aa;
+    }
+    /* Formulaire pitch */
+    .board-form-panel {
+      width: 100%; max-width: 600px;
+      background: rgba(4,4,4,0.92); border: 1px solid #2a2a2a;
+    }
+    .board-form-header {
+      padding: 11px 20px; border-bottom: 1px solid #1c1c1c;
+      font-size: 13px; letter-spacing: 0.3em; color: #424242;
+      display: flex; justify-content: space-between;
+    }
+    .board-form-body {
+      padding: 20px; display: flex; flex-direction: column; gap: 14px;
+    }
+
+    /* ===== VERDICT ===== */
+    .verdict-overlay {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .verdict-inner {
+      width: 100%; max-width: 520px;
+      background: rgba(3,3,3,0.90); border: 1px solid #1e1e1e;
+      padding: 26px 22px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .verdict-panel-header {
+      font-size: 12px; letter-spacing: 0.45em; color: #363636;
+      padding-bottom: 14px; border-bottom: 1px solid #181818;
+    }
+    .verdict-scores-list { display: flex; flex-direction: column; gap: 8px; }
+    .score-row {
+      display: flex; align-items: center; gap: 10px;
+      opacity: 0; transform: translateX(-8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .score-row.visible { opacity: 1; transform: translateX(0); }
+    .score-hat-label {
+      font-size: 11px; letter-spacing: 0.2em; color: #464646;
+      width: 96px; flex-shrink: 0;
+    }
+    .score-track {
+      flex: 1; height: 3px; background: #161616;
+      position: relative; overflow: hidden;
+    }
+    .score-fill {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+      transition: width 0.9s cubic-bezier(0.22,1,0.36,1);
+    }
+    .score-pct { font-size: 12px; color: #484848; width: 34px; text-align: right; flex-shrink: 0; }
+    .verdict-avg-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding-top: 14px; border-top: 1px solid #181818; margin-top: 4px;
+      opacity: 0; transition: opacity 0.6s;
+    }
+    .verdict-avg-row.visible { opacity: 1; }
+    .verdict-avg-label { font-size: 12px; letter-spacing: 0.3em; color: #363636; }
+    .verdict-avg-value {
+      font-family: 'Oswald', sans-serif; font-weight: 700;
+      font-size: 46px; line-height: 1; color: #b0b0b0;
+    }
+    .verdict-avg-unit { font-size: 18px; color: #585858; margin-left: 3px; }
+    .verdict-decision {
+      font-size: 14px; letter-spacing: 0.25em; padding: 10px 14px;
+      border: 1px solid #1e1e1e; color: #484848; text-align: center;
+      opacity: 0; transition: opacity 0.5s;
+    }
+    .verdict-decision.visible { opacity: 1; }
+    .verdict-decision.accord { border-color: #484848; color: #a0a0a0; }
+    .verdict-decision.refus  { border-color: #282828; color: #484848; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 380px) { .title-main { font-size: 48px; } .elev-floor-num { font-size: 80px; } }
+    /* Sur petits écrans, la zone dialogue peut prendre plus de place */
+    @media (max-height: 600px) { .persona-dialog { max-height: 70vh; } }
+
+    /* ===== RAPPORT FINAL ===== */
+    #screen-summary {
+      background: #060606;
+      align-items: flex-start; justify-content: flex-start;
+      padding: 0; overflow-y: auto;
+    }
+    .rapport-page {
+      width: 100%; max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 40px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    /* En-tête rapport */
+    .rapport-header {
+      border: 1px solid #1e1e1e;
+      padding: 14px 18px 12px;
+      position: relative;
+    }
+    .rapport-header-label {
+      font-size: 11px; letter-spacing: 0.35em; color: #383838;
+      position: absolute; top: -7px; left: 18px;
+      background: #060606; padding: 0 8px;
+    }
+    .rapport-title {
+      font-family: 'Oswald', sans-serif; font-weight: 300;
+      font-size: 32px; letter-spacing: 0.22em; color: #d0d0d0;
+    }
+    .rapport-meta {
+      font-size: 13px; color: #404040; margin-top: 5px; letter-spacing: 0.05em;
+    }
+
+    /* Grille de cartes */
+    .rapport-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    /* Carte persona */
+    .rcard {
+      border: 1px solid #1a1a1a;
+      background: #090909;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Zone visuelle : grand chiffre + photo */
+    .rcard-visual {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+      background: #0d0d0d;
+    }
+
+    /* Grand chiffre en fond */
+    .rcard-num {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Oswald', sans-serif; font-weight: 700;
+      font-size: clamp(90px, 13vw, 150px);
+      color: #d4d4d4; line-height: 1;
+      user-select: none; overflow: hidden;
+    }
+    /* Scanlines CSS sur le chiffre */
+    .rcard-num::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.38) 3px, rgba(0,0,0,0.38) 4px
+      );
+      pointer-events: none; z-index: 2;
+    }
+
+    /* Photo du persona */
+    .rcard-photo-wrap {
+      position: absolute; inset: 0; z-index: 3;
+      display: flex; align-items: flex-end; justify-content: flex-start;
+      overflow: hidden;
+    }
+    .rcard-photo {
+      height: 100%; width: auto;
+      object-fit: contain; object-position: bottom left;
+      filter: saturate(0.7);
+      margin-left: 15%;
+    }
+    /* Noise overlay sur la photo */
+    .rcard-photo-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.09'/%3E%3C/svg%3E");
+      opacity: 0.13; mix-blend-mode: overlay;
+      pointer-events: none; z-index: 4;
+    }
+    /* Placeholder coloré quand pas de photo */
+    .rcard-photo-placeholder {
+      position: absolute; inset: 0; z-index: 3;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; letter-spacing: 0.3em; color: rgba(255,255,255,0.15);
+    }
+
+    /* Bande de sol — étage */
+    .rcard-floor-strip {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 5;
+      padding: 5px 10px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+      font-size: 11px; letter-spacing: 0.28em; color: rgba(200,200,200,0.45);
+      text-align: center;
+    }
+
+    /* Zone texte sous la photo */
+    .rcard-info {
+      padding: 10px 12px 12px;
+      display: flex; flex-direction: column; gap: 7px;
+      flex: 1;
+    }
+    .rcard-meta {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 8px;
+    }
+    .rcard-chapeau {
+      font-size: 12px; letter-spacing: 0.14em; color: #707070;
+      flex: 1; line-height: 1.4;
+    }
+    .rcard-badge {
+      font-size: 11px; letter-spacing: 0.12em;
+      padding: 2px 7px; border: 1px solid;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .rcard-badge.pass  { border-color: #484848; color: #909090; }
+    .rcard-badge.retry { border-color: #2c2c2c; color: #505050; }
+    .rcard-badge.demo  { border-color: #383838; color: #686868; }
+    .rcard-response {
+      font-size: 12px; color: #505050; font-style: italic; line-height: 1.6;
+      border-left: 1px solid #222; padding-left: 8px;
+    }
+    .rcard-eval {
+      font-size: 12px; color: #606060; line-height: 1.65;
+    }
+
+    /* Boutons d'action */
+    .rapport-actions {
+      display: flex; gap: 10px; flex-wrap: wrap; padding-top: 4px;
+    }
+
+    /* ===== @MEDIA PRINT ===== */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #060606 !important; }
+      body::before, body::after { display: none !important; }
+      #cctv-hud, .noise-line, #toast { display: none !important; }
+      .screen { display: none !important; }
+      #screen-summary { display: block !important; position: static !important; overflow: visible !important; }
+      .rapport-page { padding: 12px 10px; max-width: 100%; }
+      .rapport-header { margin-bottom: 8px; }
+      .rapport-title { font-size: 22px; }
+      .rcard-visual { height: 160px; }
+      .rcard-num { font-size: 110px; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+    /* Mode paysage : 3 colonnes */
+    body.print-landscape .rapport-grid { grid-template-columns: repeat(3, 1fr); }
+    @media print {
+      body.print-landscape { size: 11in 8.5in landscape; }
+      body.print-portrait  { size: 8.5in 11in portrait; }
+      body.print-portrait .rapport-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: #111; border: 1px solid #333; padding: 10px 20px;
+      font-size: 15px; color: #888; letter-spacing: 0.15em;
+      z-index: 99999; pointer-events: none;
+      opacity: 0; transition: opacity .3s; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="noise-line"></div>
+
+<!-- HUD CCTV persistant -->
+<div id="cctv-hud">
+  <div id="hud-top">
+    <div>
+      <div id="hud-cam">CAM-01 | ASCENSEUR-STUDIO-A</div>
+      <div style="margin-top:3px" id="hud-proto">PROTO: ACTIF</div>
+    </div>
+    <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <div id="hud-clock">--/--/---- --:--:--</div>
+      <div><span class="rec-dot"></span>REC</div>
+      <!-- Indicateur d'étage -->
+      <div id="hud-floor-indicator" style="
+        display:flex; align-items:center; gap:6px;
+        margin-top:4px;
+      ">
+        <div id="hud-floor-num" style="
+          font-family:'Oswald',sans-serif; font-weight:700;
+          font-size:54px; line-height:1; color:rgba(200,200,200,0.75);
+          letter-spacing:0.06em;
+          text-shadow: 0 0 8px rgba(200,200,200,0.2);
+        ">L</div>
+        <div id="hud-floor-arrow" style="
+          font-size:22px; color:rgba(150,150,150,0.5);
+          animation: rec-blink 1.6s ease-in-out infinite;
+          display:none;
+        ">↑</div>
+      </div>
+    </div>
+  </div>
+  <div id="hud-bottom">
+    <div>
+      <div>ÉTAGE: <span id="hud-floor">001</span> / 100</div>
+      <div style="margin-top:3px" id="hud-location">HALL D'ACCUEIL</div>
+    </div>
+    <div class="signal-bars">
+      <div class="signal-bar"></div><div class="signal-bar"></div>
+      <div class="signal-bar"></div><div class="signal-bar"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ================================================================ BOOT -->
+<div id="screen-boot" class="screen active">
+  <pre class="boot-pre" id="boot-output"></pre>
+</div>
+
+<!-- ================================================================ TITRE -->
+<div id="screen-title" class="screen">
+  <div class="title-eyebrow">AGENCE STUDIO X — SYSTÈME DE FORMATION CRÉATIVE</div>
+  <div class="title-main">L'AS<span class="title-c-clip"><span class="title-c-letter">C</span></span>ENSEUR</div>
+  <div class="title-sub">LES 6 CHAPEAUX DU STUDIO · JEU D'ARGUMENTATION CRÉATIVE</div>
+  <button class="btn primary" id="btn-start">[ DÉMARRER LA SESSION ]</button>
+  <div class="muted" style="text-align:center;margin-top:8px">PROTOTYPE MVP · ÉTAGES NOIR & ROUGE</div>
+</div>
+
+<!-- ================================================================ BRIEF -->
+<div id="screen-brief" class="screen">
+  <div class="brief-wrap">
+    <div class="dossier-box" data-label="MISSION ASSIGNÉE">
+      <div class="dossier-title">DOSSIER CONFIDENTIEL</div>
+      <div class="dossier-id-line">ID: <span id="brief-session-id">---</span> · NIVEAU: DESIGNER JUNIOR</div>
+    </div>
+    <div>
+      <label class="field-label">01 — TITRE DU MANDAT / NOM DU PROJET</label>
+      <textarea class="field-input single" id="input-title"
+        placeholder="ex: Campagne affiche Festival de Mégantic 2025..."></textarea>
+    </div>
+    <div>
+      <label class="field-label">02 — DESCRIPTION DU CONCEPT VISUEL</label>
+      <textarea class="field-input" id="input-brief" rows="5"
+        placeholder="Décrivez votre concept : approche visuelle, palette, typographie, public cible, intention créative..."></textarea>
+    </div>
+    <div class="field-foot">
+      <div class="muted" id="dev-rapport-link" title="[DEV] Accès direct au rapport" style="cursor:pointer;user-select:none;">AUTHENTIFICATION REQUISE</div>
+      <button class="btn primary" id="btn-submit-brief">[ ACCÉDER À L'ASCENSEUR → ]</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ ASCENSEUR -->
+<div id="screen-elevator" class="screen">
+  <div class="elev-wrap">
+    <div class="elev-floor-label">ÉTAGE EN COURS</div>
+    <div class="elev-floor-num" id="elev-num">001</div>
+    <div class="elev-destination" id="elev-dest">EN ROUTE VERS L'ÉTAGE 017</div>
+    <div class="elev-divider"></div>
+    <div class="elev-status" id="elev-status">MONTÉE EN COURS...</div>
+  </div>
+</div>
+
+<!-- ================================================================ PERSONA -->
+<div id="screen-persona" class="screen">
+  <div class="persona-cam-view" id="persona-cam-view">
+    <!-- Vidéo CCTV -->
+    <video id="persona-video" class="cctv-video" playsinline preload="auto"></video>
+
+    <!-- Overlay SVG CCTV vert — design overlat copy.svg -->
+    <div class="cctv-svg-overlay">
+      <svg viewBox="0 0 1524 1044" preserveAspectRatio="none"
+           fill="none" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Lignes de données droite — alternance longue/courte (data stream) -->
+        <g class="cctv-data-group" stroke="#6FBE52" stroke-width="2" stroke-miterlimit="10">
+          <line x1="1473" y1="84"  x2="1524" y2="84"/>
+          <line x1="1488" y1="99"  x2="1525" y2="99"/>
+          <line x1="1473" y1="115" x2="1524" y2="115"/>
+          <line x1="1488" y1="130" x2="1525" y2="130"/>
+          <line x1="1473" y1="146" x2="1524" y2="146"/>
+          <line x1="1488" y1="161" x2="1525" y2="161"/>
+          <line x1="1473" y1="177" x2="1524" y2="177"/>
+          <line x1="1488" y1="192" x2="1525" y2="192"/>
+          <line x1="1473" y1="208" x2="1524" y2="208"/>
+          <line x1="1488" y1="223" x2="1525" y2="223"/>
+          <line x1="1473" y1="239" x2="1524" y2="239"/>
+          <line x1="1488" y1="254" x2="1525" y2="254"/>
+          <line x1="1473" y1="270" x2="1524" y2="270"/>
+          <line x1="1488" y1="285" x2="1525" y2="285"/>
+          <line x1="1473" y1="301" x2="1524" y2="301"/>
+          <line x1="1488" y1="316" x2="1525" y2="316"/>
+          <line x1="1473" y1="332" x2="1524" y2="332"/>
+          <line x1="1488" y1="347" x2="1525" y2="347"/>
+          <line x1="1473" y1="363" x2="1524" y2="363"/>
+          <line x1="1488" y1="378" x2="1525" y2="378"/>
+          <line x1="1473" y1="394" x2="1524" y2="394"/>
+          <line x1="1488" y1="409" x2="1525" y2="409"/>
+          <line x1="1473" y1="425" x2="1524" y2="425"/>
+          <line x1="1488" y1="440" x2="1525" y2="440"/>
+          <line x1="1473" y1="456" x2="1524" y2="456"/>
+          <line x1="1488" y1="471" x2="1525" y2="471"/>
+          <line x1="1473" y1="487" x2="1524" y2="487"/>
+          <line x1="1488" y1="502" x2="1525" y2="502"/>
+          <line x1="1473" y1="518" x2="1524" y2="518"/>
+          <line x1="1488" y1="533" x2="1525" y2="533"/>
+          <line x1="1473" y1="549" x2="1524" y2="549"/>
+          <line x1="1488" y1="564" x2="1525" y2="564"/>
+          <line x1="1473" y1="580" x2="1524" y2="580"/>
+          <line x1="1488" y1="595" x2="1525" y2="595"/>
+          <line x1="1473" y1="611" x2="1524" y2="611"/>
+          <line x1="1488" y1="626" x2="1525" y2="626"/>
+          <line x1="1473" y1="642" x2="1524" y2="642"/>
+          <line x1="1488" y1="657" x2="1525" y2="657"/>
+          <line x1="1473" y1="673" x2="1524" y2="673"/>
+          <line x1="1488" y1="688" x2="1525" y2="688"/>
+          <line x1="1473" y1="704" x2="1524" y2="704"/>
+          <line x1="1488" y1="719" x2="1525" y2="719"/>
+          <line x1="1473" y1="735" x2="1524" y2="735"/>
+          <line x1="1488" y1="750" x2="1525" y2="750"/>
+          <line x1="1473" y1="766" x2="1524" y2="766"/>
+          <line x1="1488" y1="781" x2="1525" y2="781"/>
+          <line x1="1473" y1="797" x2="1524" y2="797"/>
+          <line x1="1488" y1="812" x2="1525" y2="812"/>
+          <line x1="1473" y1="828" x2="1524" y2="828"/>
+          <line x1="1488" y1="843" x2="1525" y2="843"/>
+          <line x1="1473" y1="859" x2="1524" y2="859"/>
+          <line x1="1488" y1="874" x2="1525" y2="874"/>
+          <line x1="1473" y1="890" x2="1524" y2="890"/>
+          <line x1="1488" y1="905" x2="1525" y2="905"/>
+          <line x1="1473" y1="921" x2="1524" y2="921"/>
+          <line x1="1488" y1="936" x2="1525" y2="936"/>
+        </g>
+
+        <!-- Cadre principal (zone active vidéo) -->
+        <rect x="129" y="105.21" width="1272" height="789.76"
+              stroke="#6FBE52" stroke-width="2.32" stroke-miterlimit="10"/>
+
+        <!-- Jauge gauche — tirets diagonaux épais (signal interlace) -->
+        <g stroke="#6FBE52" stroke-width="12.47" stroke-miterlimit="10">
+          <line x1="85.04" y1="106.89"  x2="108.75" y2="125.60"/>
+          <line x1="85.04" y1="137.24"  x2="108.75" y2="155.95"/>
+          <line x1="85.04" y1="167.59"  x2="108.75" y2="186.30"/>
+          <line x1="85.04" y1="197.94"  x2="108.75" y2="216.65"/>
+          <line x1="85.04" y1="228.29"  x2="108.75" y2="247.00"/>
+          <line x1="85.04" y1="258.63"  x2="108.75" y2="277.34"/>
+          <line x1="85.04" y1="288.98"  x2="108.75" y2="307.69"/>
+          <line x1="85.04" y1="319.33"  x2="108.75" y2="338.04"/>
+          <line x1="85.04" y1="349.68"  x2="108.75" y2="368.39"/>
+          <line x1="85.04" y1="380.03"  x2="108.75" y2="398.74"/>
+          <line x1="85.04" y1="410.37"  x2="108.75" y2="429.09"/>
+          <line x1="85.04" y1="440.72"  x2="108.75" y2="459.43"/>
+          <line x1="85.04" y1="471.07"  x2="108.75" y2="489.78"/>
+          <line x1="85.04" y1="501.42"  x2="108.75" y2="520.13"/>
+        </g>
+
+        <!-- Équerre supérieure gauche -->
+        <polyline stroke="#6FBE52" stroke-width="3" stroke-miterlimit="10"
+          points="16.02,667.36 16.02,93.78 79.2,30.6 239.01,30.6"/>
+
+        <!-- Équerre inférieure droite -->
+        <polyline stroke="#6FBE52" stroke-width="3" stroke-miterlimit="10"
+          points="937.22,1023.65 363.64,1023.65 300.46,960.47 300.46,800.66"/>
+      </svg>
+    </div>
+
+    <!-- Détection -->
+    <div class="det-face"><div class="det-label" id="det-label">ID: ---</div></div>
+    <div class="det-body"></div>
+    <!-- Overlay bas -->
+    <div class="persona-overlay-bottom">
+      <div>
+        <div class="p-titre" id="p-titre">---</div>
+        <div class="p-nom" id="p-nom">---</div>
+      </div>
+      <div class="p-chapeau" id="p-chapeau">---</div>
+    </div>
+    <div class="cam-label" id="p-cam">CAM-02</div>
+    <div class="cam-floor" id="p-floor-badge">ÉT.017</div>
+    <!-- Gel image -->
+    <div class="freeze-badge" id="freeze-badge">▌▌ GEL D'IMAGE</div>
+  </div>
+
+  <!-- Dialogue -->
+  <div class="persona-dialog">
+    <div class="dialog-protocol" id="dialog-protocol">PROTOCOLE: ---</div>
+    <div id="chat-log"></div>
+    <div id="response-section">
+      <div class="response-wrap">
+        <span class="input-ready-dot"></span>
+        <textarea class="response-area" id="response-input"
+          placeholder="Votre réponse — développez votre argumentation..."></textarea>
+      </div>
+      <div class="dialog-foot">
+        <div class="char-count"><span id="char-count">0</span> CARACTÈRES</div>
+        <button class="btn primary" id="btn-submit-response">[ SOUMETTRE ]</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ ÉVALUATION -->
+<div id="screen-evaluation" class="screen">
+  <div class="eval-card">
+  <div class="eval-header">
+    <span id="eval-header-name">---</span>
+    <span>ANALYSE IA EN COURS</span>
+  </div>
+  <div class="eval-body">
+    <div class="eval-loading" id="eval-loading">
+      <div class="loading-dots">
+        <div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>
+      </div>
+      <div class="loading-text">TRAITEMENT DE LA RÉPONSE...</div>
+    </div>
+    <div class="eval-response" id="eval-response">
+      <div class="eval-verdict" id="eval-verdict">---</div>
+      <div class="eval-text" id="eval-text">---</div>
+      <div class="eval-decision" id="eval-decision">---</div>
+      <div class="eval-actions" id="eval-actions"></div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ================================================================ BOARDROOM -->
+<div id="screen-boardroom" class="screen">
+  <!-- Phase 1 : vidéo d'entrée (scene7x) -->
+  <div id="boardroom-entry-wrap" style="position:absolute;inset:0;">
+    <video id="boardroom-entry-video" class="cctv-video" playsinline preload="auto"></video>
+  </div>
+  <!-- Phase 2 : salle + écran de projection + pitch -->
+  <div id="boardroom-room-wrap" style="display:none;position:absolute;inset:0;">
+    <div class="board-bg-wrap">
+      <img src="images/board0x.png" class="board-bg-img" alt="Salle du conseil">
+    </div>
+    <div class="board-overlay">
+      <div class="board-projection">
+        <div class="board-proj-label">CONCEPT EN PRÉSENTATION</div>
+        <div class="board-proj-title" id="board-proj-title">---</div>
+      </div>
+      <div class="board-form-panel">
+        <div class="board-form-header">
+          <span>PITCH FINAL — ÉTAGE 100</span>
+          <span id="board-session-id">---</span>
+        </div>
+        <div class="board-form-body">
+          <label class="field-label">Intégrez les rétroactions des 6 experts dans votre concept bonifié</label>
+          <textarea class="field-input" id="boardroom-pitch" rows="5"
+            placeholder="Présentez votre concept révisé en tenant compte des rétroactions reçues..."></textarea>
+          <div class="field-foot">
+            <div class="muted" id="board-char-count">0 / min. 80 car.</div>
+            <button class="btn primary" id="btn-pitch-submit">[ PRÉSENTER AU PANEL → ]</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ VERDICT -->
+<div id="screen-verdict" class="screen">
+  <video id="verdict-video" class="cctv-video" playsinline preload="auto"></video>
+  <div id="verdict-overlay" class="verdict-overlay">
+    <div class="verdict-inner">
+      <div class="verdict-panel-header">DÉLIBÉRATION DU PANEL</div>
+      <div id="verdict-scores" class="verdict-scores-list"></div>
+      <div id="verdict-avg-row" class="verdict-avg-row">
+        <span class="verdict-avg-label">MOYENNE DU PANEL</span>
+        <span><span id="verdict-avg-value" class="verdict-avg-value">--</span><span class="verdict-avg-unit">%</span></span>
+      </div>
+      <div id="verdict-decision-el" class="verdict-decision">---</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ RAPPORT FINAL -->
+<div id="screen-summary" class="screen">
+
+  <!-- SVG filtre bruit pour les photos -->
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="photo-noise-filter" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.88" numOctaves="4" stitchTiles="stitch" result="noiseOut"/>
+        <feColorMatrix type="saturate" values="0" in="noiseOut" result="grayNoise"/>
+        <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" result="blend"/>
+        <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="rapport-page" id="rapport-page">
+
+    <!-- EN-TÊTE -->
+    <div class="rapport-header">
+      <div class="rapport-header-label">— RAPPORT DE SESSION — PROTOTYPE MVP —</div>
+      <div class="rapport-title">RAPPORT DE SESSION</div>
+      <div class="rapport-meta" id="summary-meta">SESSION: --- · --/--/---- · ÉTAGES: 0/6</div>
+    </div>
+
+    <!-- GRILLE 6 CARTES -->
+    <div class="rapport-grid" id="summary-results"></div>
+
+    <!-- ACTIONS (masquées à l'impression) -->
+    <div class="rapport-actions no-print">
+      <button class="btn primary" id="btn-print-landscape">[ ↓ EXPORTER PDF — PAYSAGE 3×2 ]</button>
+      <button class="btn primary" id="btn-print-portrait">[ ↓ EXPORTER PDF — PORTRAIT 2×3 ]</button>
+      <button class="btn ghost"  id="btn-restart">[ NOUVELLE SESSION ]</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURATION
+// Ajoutez votre clé Gemini pour activer l'IA réelle.
+// Sans clé → mode démo avec réponses simulées.
+// ============================================================
+const CONFIG = {
+  // ⬇ Colle ici l'URL de ton projet Vercel une fois déployé
+  VERCEL_API_URL: '/api/evaluate',
+  // GEMINI_API_KEY uniquement si tu veux tester EN LOCAL sans Vercel
+  GEMINI_API_KEY: '',
+};
+
+// ============================================================
+// POINTS DE GEL VIDÉO
+// Ajustez si le gel arrive trop tôt ou trop tard.
+// Claude = 8.04s total → gel à 6.0s par défaut
+// Béatrice = 15.12s total → gel à 10.0s
+// Florence  = 15.12s total → gel à 10.0s par défaut
+// Antoine   = 10.04s total → gel à  7.0s par défaut
+// Gabriel   = 10.04s total → gel à  7.0s par défaut
+// Martine   = 10.04s total → gel à  7.0s par défaut
+// ============================================================
+const PAUSE_TIMES = {
+  noir:  6.0,
+  rouge: 10.0,
+  jaune: 10.0,
+  blanc:  9.9,
+  vert:   9.9,
+  bleu:   9.9,
+};
+
+// ============================================================
+// ÉTAT DU JEU
+// ============================================================
+const G = {
+  title: '', brief: '',
+  sessionId: '',
+  floor: 1,
+  personaIndex: 0,
+  results: [],
+};
+
+// ============================================================
+// PERSONAS
+// Séquence : Noir(17) → Rouge(33) → Jaune(50) → Blanc(67) → Vert(83) → Bleu(97)
+// ============================================================
+const PERSONAS = [
+  {
+    id: 'noir',
+    floor: 17,
+    nom: 'CLAUDE',
+    titre: 'ANALYSTE CRITIQUE',
+    chapeau: 'CHAPEAU NOIR',
+    cam: 'CAM-02',
+    protocol: 'RISQUE & FAISABILITÉ',
+    video: 'video/scene01.mp4',
+    photo: 'images/photo-claude-noir.png',
+    accentColor: '#2a2a2a',
+
+    // Dialogue en 3 phases : icebreaker → réponse joueur → question De Bono
+    dialogue(title) {
+      return [
+        {
+          from: 'persona',
+          text: `... Intéressant ce qu'il y a sur ta tablette. C'est quoi comme projet?`,
+        },
+        {
+          from: 'player',
+          text: `"${title}" — un concept pour le pitch au 100e.`,
+        },
+        {
+          from: 'persona',
+          text: `Bien.\n\nAlors parlons-en franchement. Où sont les failles de ce concept? Nommez-moi les risques techniques, les contraintes de prépresse ou les enjeux éthiques que vous avez anticipés. Je ne veux pas d'optimisme. Je veux de la lucidité.`,
+          isQuestion: true,
+        },
+      ];
+    },
+
+    buildSystemPrompt(title, brief) {
+      return `Tu incarnes Claude, un expert en analyse critique qui porte le Chapeau Noir de la méthode De Bono. Tu es rigoureux, direct, parfois intimidant mais toujours constructif. Tu cherches les failles : risques techniques, contraintes de prépresse, faisabilité, enjeux éthiques.
+
+Brief du projet :
+Titre : ${title}
+Concept : ${brief}
+
+Évalue la réponse de l'étudiant·e. Réponds EN PERSONNAGE (tu ES Claude, le Chapeau Noir) en 3-4 phrases, en français canadien.
+
+À la toute fin, sur une ligne seule :
+[DÉCISION: MONTEZ] si la réponse montre une vraie conscience critique
+[DÉCISION: RETENTEZ] si la réponse est superficielle ou esquive les vraies questions`;
+    },
+    mockPass: `Bien. Vous avez nommé des contraintes réelles plutôt que de vous réfugier derrière l'esthétique. Cette lucidité est rare chez un junior. Je reste sceptique sur quelques angles morts — mais pour l'instant, vous méritez de monter.
+
+[DÉCISION: MONTEZ]`,
+    mockRetry: `Ce que vous décrivez, c'est ce que vous voulez créer — pas ce qui peut mal tourner. Où sont les risques de fichiers mal configurés pour l'impression? Les tensions éthiques dans vos choix visuels? Recommencez. Pensez comme quelqu'un qui cherche à vous faire échouer.
+
+[DÉCISION: RETENTEZ]`,
+  },
+
+  {
+    id: 'rouge',
+    floor: 33,
+    nom: 'BÉATRICE',
+    titre: 'EXPERTE EN IMPACT ÉMOTIF',
+    chapeau: 'CHAPEAU ROUGE',
+    cam: 'CAM-03',
+    protocol: 'ÉMOTION & SÉMIOLOGIE',
+    video: 'video/scene02.mp4',
+    photo: 'images/photo-beatrice-rouge.png',
+    accentColor: '#2a0a0a',
+
+    dialogue(title) {
+      return [
+        {
+          from: 'persona',
+          text: `... Oh. Beau projet sur cette tablette. C'est quoi?`,
+        },
+        {
+          from: 'player',
+          text: `"${title}" — pour le pitch au 100e étage.`,
+        },
+        {
+          from: 'persona',
+          text: `Ah...\n\nMes tripes me disent quelque chose — mais j'ai besoin d'entendre la vôtre. Quelle émotion précise ce projet doit-il déclencher? Et comment vos choix visuels — couleurs, typographie, images — le communiquent-ils de façon viscérale?`,
+          isQuestion: true,
+        },
+      ];
+    },
+
+    buildSystemPrompt(title, brief) {
+      return `Tu incarnes Béatrice, une experte en impact émotionnel et sémiologie visuelle qui porte le Chapeau Rouge de la méthode De Bono. Tu juges avec tes tripes — l'émotion, la vibration, la résonance. Tu es viscérale, intuitive, parfois impatiente.
+
+Brief du projet :
+Titre : ${title}
+Concept : ${brief}
+
+Évalue la réponse sur la cohérence émotionnelle et sémiologique. Réponds EN PERSONNAGE (tu ES Béatrice, le Chapeau Rouge) en 3-4 phrases, en français canadien.
+
+À la toute fin, sur une ligne seule :
+[DÉCISION: MONTEZ] si tu ressens une vraie intention émotionnelle cohérente
+[DÉCISION: RETENTEZ] si la réponse est trop intellectuelle ou sans émotion réelle`;
+    },
+    mockPass: `Voilà quelque chose que je RESSENS vraiment. Vous ne me parlez pas de technique — vous me parlez d'une vibration humaine. Vos choix ont du sens au niveau viscéral. Gardez cette énergie pour le pitch final.
+
+[DÉCISION: MONTEZ]`,
+    mockRetry: `Non, non, non. Vous me parlez de théorie là où je cherche l'émotion brute. Ce n'est pas votre tête que j'évalue — c'est votre cœur. Dites-moi ce que ce projet FAIT ressentir à quelqu'un qui le voit pour la première fois.
+
+[DÉCISION: RETENTEZ]`,
+  },
+  // Florence / Jaune (étage 50) — placeholder pour version complète
+  { id:'jaune', floor:50, nom:'FLORENCE', titre:'STRATÈGE OPTIMISTE', chapeau:'CHAPEAU JAUNE',
+    cam:'CAM-04', protocol:'VALEUR & BÉNÉFICES', video:'video/scene03.mp4', photo:'images/photo-florence-jaune.png', accentColor:'#1a1600',
+    dialogue(t){return[{from:'persona',text:`Votre projet m'intrigue. De quoi s'agit-il?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Quelles sont les opportunités concrètes et les bénéfices mesurables de ce concept pour le client?`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Tu incarnes Florence, experte en pensée optimiste (Chapeau Jaune). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
+    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+
+  // Antoine / Blanc (étage 67)
+  { id:'blanc', floor:67, nom:'ANTOINE', titre:'EXPERT EN DONNÉES', chapeau:'CHAPEAU BLANC',
+    cam:'CAM-05', protocol:'DONNÉES & FAITS', video:'video/scene04.mp4', photo:'images/photo-antoine-blanc.png', accentColor:'#141414',
+    dialogue(t){return[{from:'persona',text:`Curieux projet. Qu'est-ce que c'est?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Quelles données factuelles, statistiques ou recherches justifient vos choix visuels et créatifs?`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Tu incarnes Antoine, expert en faits et données (Chapeau Blanc). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
+    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+
+  // Gabriel / Vert (étage 83)
+  { id:'vert', floor:83, nom:'GABRIEL', titre:'CATALYSEUR CRÉATIF', chapeau:'CHAPEAU VERT',
+    cam:'CAM-06', protocol:'CRÉATIVITÉ & ALTERNATIVES', video:'video/scene05.mp4', photo:'images/photo-gabriel-vert.png', accentColor:'#0a1200',
+    dialogue(t){return[{from:'persona',text:`Hé, beau projet là. C'est quoi?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Cool. Mais quelles alternatives avez-vous explorées? Qu'est-ce qui aurait pu être complètement différent?`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Tu incarnes Gabriel, catalyseur créatif (Chapeau Vert). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
+    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+
+  // Martine / Bleu (étage 97)
+  { id:'bleu', floor:97, nom:'MARTINE', titre:'DIRECTRICE DE PROCESSUS', chapeau:'CHAPEAU BLEU',
+    cam:'CAM-07', protocol:'SYNTHÈSE & PROCESSUS', video:'video/scene06.mp4', photo:'images/photo-martine-bleu.png', accentColor:'#00080f',
+    dialogue(t){return[{from:'persona',text:`Voilà un projet intéressant. Résumez-le moi.`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Faites-moi une synthèse structurée de votre démarche créative, de votre processus de décision, et de votre prochaine étape concrète.`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Tu incarnes Martine, directrice de processus (Chapeau Bleu). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
+    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+];
+
+// ============================================================
+// UTILITAIRES
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.scrollTop = 0;
+}
+
+function pad3(n) { return String(Math.round(n)).padStart(3, '0'); }
+
+function updateHUD(floor, location) {
+  document.getElementById('hud-floor').textContent = pad3(floor);
+  if (location) document.getElementById('hud-location').textContent = location.toUpperCase();
+  // Indicateur grand format coin haut-droit
+  const numEl   = document.getElementById('hud-floor-num');
+  const arrowEl = document.getElementById('hud-floor-arrow');
+  if (floor <= 1) {
+    numEl.textContent      = 'L';
+    arrowEl.style.display  = 'none';
+  } else {
+    numEl.textContent      = pad3(floor);
+    arrowEl.style.display  = 'block';
+  }
+}
+
+function genSessionId() {
+  return 'SES-' + Math.random().toString(36).substring(2, 7).toUpperCase() + '-' + new Date().getFullYear();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Horloge
+function startClock() {
+  const el = document.getElementById('hud-clock');
+  const fmt = n => String(n).padStart(2, '0');
+  const tick = () => {
+    const d = new Date();
+    el.textContent = `${fmt(d.getDate())}/${fmt(d.getMonth()+1)}/${d.getFullYear()} ${fmt(d.getHours())}:${fmt(d.getMinutes())}:${fmt(d.getSeconds())}`;
+  };
+  tick(); setInterval(tick, 1000);
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+function runBoot() {
+  const el = document.getElementById('boot-output');
+  const lines = [
+    { t: 'AGENCE STUDIO X — SYSTÈME DE FORMATION v2.6', ms: 0,    c: 'ok'  },
+    { t: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', ms: 180  },
+    { t: '',                                                         ms: 350  },
+    { t: 'Initialisation du système...',                            ms: 500  },
+    { t: '  [OK] Caméras de sécurité ............. EN LIGNE',       ms: 720,  c: 'ok' },
+    { t: '  [OK] Système ascenseur (100 étages) .. OPÉRATIONNEL',   ms: 920,  c: 'ok' },
+    { t: '  [OK] Module vidéo CCTV ............... ACTIF',          ms: 1120, c: 'ok' },
+    { t: '  [OK] Interface IA ..................... CONNECTÉE',       ms: 1320, c: 'ok' },
+    { t: '  [OK] Protocole 6-CHAPEAUX ............ CHARGÉ',         ms: 1520, c: 'ok' },
+    { t: '',                                                         ms: 1700 },
+    { t: 'Experts — édifice 100 étages:',                           ms: 1850 },
+    { t: '  ◈ CLAUDE     CHAPEAU NOIR   (ÉT.017)  PRÊT  ▶',       ms: 2050, c: 'ok' },
+    { t: '  ◈ BÉATRICE   CHAPEAU ROUGE  (ÉT.033)  PRÊT  ▶',       ms: 2200, c: 'ok' },
+    { t: '  · FLORENCE   CHAPEAU JAUNE  (ÉT.050)  EN DÉVELOPPEMENT', ms: 2350, c: 'dim' },
+    { t: '  · ANTOINE    CHAPEAU BLANC  (ÉT.067)  EN DÉVELOPPEMENT', ms: 2480, c: 'dim' },
+    { t: '  · GABRIEL    CHAPEAU VERT   (ÉT.083)  EN DÉVELOPPEMENT', ms: 2610, c: 'dim' },
+    { t: '  · MARTINE    CHAPEAU BLEU   (ÉT.097)  EN DÉVELOPPEMENT', ms: 2740, c: 'dim' },
+    { t: '  · SALLE BOARD              (ÉT.100)   VERROUILLÉE',     ms: 2870, c: 'dim' },
+    { t: '',                                                         ms: 3000 },
+    { t: 'PROTOTYPE MVP — ÉTAGES NOIR & ROUGE ACTIFS',              ms: 3100, c: 'ok' },
+    { t: '► ACCÈS AUTORISÉ',                                        ms: 3280, c: 'ok' },
+  ];
+  lines.forEach(({ t, ms, c }) => {
+    setTimeout(() => {
+      const span = document.createElement('span');
+      if (c === 'ok')  span.style.color = '#a8a8a8';
+      if (c === 'dim') span.style.color = '#363636';
+      span.textContent = t + '\n';
+      el.appendChild(span);
+    }, ms);
+  });
+  setTimeout(() => {
+    showScreen('screen-title');
+    // 1s après l'apparition du titre → le C monte comme une cabine
+    setTimeout(() => {
+      const c = document.querySelector('.title-c-letter');
+      if (c) c.classList.add('animating');
+    }, 1000);
+  }, 3700);
+}
+
+// ============================================================
+// ANIMATION ASCENSEUR
+// ============================================================
+function animateElevator(from, to, onDone) {
+  showScreen('screen-elevator');
+  const numEl  = document.getElementById('elev-num');
+  const destEl = document.getElementById('elev-dest');
+  const statEl = document.getElementById('elev-status');
+  destEl.textContent = `EN ROUTE VERS L'ÉTAGE ${pad3(to)}`;
+  statEl.textContent = 'MONTÉE EN COURS...';
+
+  const steps    = to - from;
+  const interval = Math.max(35, 2200 / steps);
+  let cur = from;
+
+  const timer = setInterval(() => {
+    cur++;
+    numEl.textContent = pad3(cur);
+    updateHUD(cur, 'ASCENSEUR EN MOUVEMENT');
+    if (cur >= to) {
+      clearInterval(timer);
+      statEl.textContent = '▼  ARRIVÉE — PORTES EN COURS D\'OUVERTURE  ▼';
+      setTimeout(onDone, 900);
+    }
+  }, interval);
+}
+
+// ============================================================
+// AFFICHAGE PERSONA + VIDÉO + DIALOGUE
+// ============================================================
+function appendChatMsg(from, text) {
+  const log = document.getElementById('chat-log');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${from}`;
+
+  const label = document.createElement('div');
+  label.className = `msg-from ${from}-from`;
+  label.textContent = from === 'persona' ? '▸ EXPERT' : '▸ VOUS';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  div.appendChild(label);
+  div.appendChild(bubble);
+  log.appendChild(div);
+  const dlg = log.closest('.persona-dialog');
+  if (dlg) dlg.scrollTop = dlg.scrollHeight;
+  return bubble;
+}
+
+async function typewriter(el, text, speed = 18) {
+  el.textContent = '';
+  const scrollContainer = el.closest('.persona-dialog');
+  let i = 0;
+  // Regrouper par mots entiers pour réduire les reflows — scroll toutes les 6 lettres max
+  while (i < text.length) {
+    el.textContent = text.substring(0, i + 1);
+    i++;
+    // Scroll uniquement sur espace ou ponctuation (fin de mot) ou toutes les 6 chars
+    if (i % 6 === 0 || text[i - 1] === ' ' || text[i - 1] === '\n') {
+      if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }
+    await delay(speed);
+  }
+  // Scroll final garanti
+  if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
+}
+
+async function runDialogue(p) {
+  const phases = p.dialogue(G.title);
+  document.getElementById('response-section').style.display = 'none';
+  document.getElementById('response-input').value = '';
+  document.getElementById('char-count').textContent = '0';
+
+  for (const phase of phases) {
+    await delay(phase.from === 'persona' ? 500 : 800);
+    const bubble = appendChatMsg(phase.from, '');
+
+    if (phase.from === 'persona') {
+      await typewriter(bubble, phase.text, 10);
+    } else {
+      bubble.textContent = phase.text;
+      const dlg = bubble.closest('.persona-dialog');
+      if (dlg) dlg.scrollTop = dlg.scrollHeight;
+      await delay(1400);
+    }
+
+    if (phase.isQuestion) {
+      await delay(300);
+      document.getElementById('response-section').style.display = 'flex';
+      document.getElementById('response-input').focus();
+    }
+  }
+}
+
+function showPersona(idx) {
+  const p = PERSONAS[idx];
+
+  // HUD
+  document.getElementById('hud-cam').textContent   = `${p.cam} | ASCENSEUR-STUDIO-A`;
+  document.getElementById('hud-proto').textContent  = p.protocol;
+  updateHUD(p.floor, `RENCONTRE — ${p.chapeau}`);
+
+  // Infos persona
+  document.getElementById('det-label').textContent       = `ID: ${p.nom} · ${p.chapeau}`;
+  document.getElementById('p-cam').textContent            = p.cam;
+  document.getElementById('p-floor-badge').textContent   = `ÉT.${pad3(p.floor)}`;
+  document.getElementById('p-nom').textContent            = p.nom;
+  document.getElementById('p-titre').textContent          = p.titre;
+  document.getElementById('p-chapeau').textContent        = p.chapeau;
+  document.getElementById('dialog-protocol').textContent  = `PROTOCOLE: ${p.protocol}`;
+
+  // Reset chat
+  document.getElementById('chat-log').innerHTML = '';
+  document.getElementById('response-section').style.display = 'none';
+
+  // Badge gel + overlay
+  const freezeBadge = document.getElementById('freeze-badge');
+  freezeBadge.classList.remove('visible');
+  document.getElementById('persona-cam-view').classList.remove('freeze-active');
+
+  // Vidéo
+  const video   = document.getElementById('persona-video');
+  const camView = document.getElementById('persona-cam-view');
+  const pauseAt = PAUSE_TIMES[p.id] || 5.0;
+
+  // Retirer anciens listeners + annuler tout rAF en cours
+  video.onended      = null;
+  video.ontimeupdate = null;
+  video.onerror      = null;
+  video.oncanplay    = null;
+  if (video._rafId) { cancelAnimationFrame(video._rafId); video._rafId = null; }
+
+  video.src         = p.video;
+  video.muted       = false;
+  video.loop        = false;
+  video.currentTime = 0;
+
+  let froze = false;
+
+  function doFreeze() {
+    if (froze) return;
+    froze = true;
+    if (video._rafId) { cancelAnimationFrame(video._rafId); video._rafId = null; }
+    video.pause();
+    freezeBadge.classList.add('visible');
+    camView.classList.remove('video-playing');
+    camView.classList.add('freeze-active');
+    runDialogue(p);
+  }
+
+  // requestAnimationFrame au lieu de ontimeupdate :
+  // synchronisé au rendu (60 fps max), jamais plus fréquent → 4× moins de charge CPU
+  function watchPause() {
+    if (video.currentTime >= pauseAt) {
+      doFreeze();
+    } else if (!video.paused && !video.ended) {
+      video._rafId = requestAnimationFrame(watchPause);
+    }
+  }
+
+  video.onerror = () => doFreeze();
+
+  video.oncanplay = () => {
+    video.play().then(() => {
+      // Suspendre les animations SVG pendant la lecture pour libérer le thread
+      camView.classList.add('video-playing');
+      video._rafId = requestAnimationFrame(watchPause);
+    }).catch(() => doFreeze());
+  };
+
+  // Scène 01 (idx=0) : entrée dans l'ascenseur → pas de slide-up
+  const ps = document.getElementById('screen-persona');
+  if (idx === 0) ps.classList.add('skip-slide');
+  showScreen('screen-persona');
+  requestAnimationFrame(() => ps.classList.remove('skip-slide'));
+  video.load();
+}
+
+// ============================================================
+// APPEL GEMINI
+// ============================================================
+async function callGemini(persona, studentResponse) {
+  const apiUrl = CONFIG.VERCEL_API_URL.trim();
+  const key    = CONFIG.GEMINI_API_KEY.trim();
+
+  // Mode démo : ni Vercel ni clé directe configurés
+  if (!apiUrl.startsWith('https://') && !key) {
+    await delay(1800 + Math.random() * 700);
+    return studentResponse.trim().length > 90 ? persona.mockPass : persona.mockRetry;
+  }
+
+  // Utilise le proxy Vercel si configuré, sinon appel direct (test local)
+  const url  = apiUrl.startsWith('https://')
+    ? apiUrl
+    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+
+  const body = {
+    system_instruction: { parts: [{ text: persona.buildSystemPrompt(G.title, G.brief) }] },
+    contents: [{ role: 'user', parts: [{ text: `Réponse de l'étudiant·e :\n\n"${studentResponse}"` }] }],
+    generationConfig: { temperature: 0.82, maxOutputTokens: 320 },
+  };
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.candidates[0].content.parts[0].text;
+  } catch (e) {
+    console.error('Gemini error:', e);
+    return studentResponse.length > 90 ? persona.mockPass : persona.mockRetry;
+  }
+}
+
+// ============================================================
+// ÉVALUATION
+// ============================================================
+async function showEvaluation(idx, studentResponse) {
+  const p = PERSONAS[idx];
+  showScreen('screen-evaluation');
+  document.getElementById('eval-header-name').textContent = `${p.nom} — ${p.chapeau}`;
+  document.getElementById('eval-loading').style.display  = 'flex';
+  document.getElementById('eval-response').style.display = 'none';
+
+  let raw = '';
+  try { raw = await callGemini(p, studentResponse); }
+  catch(e) { console.error(e); raw = p.mockRetry; }
+
+  const isPass    = raw.includes('[DÉCISION: MONTEZ]');
+  const cleanText = raw.replace(/\[DÉCISION:.*?\]/g, '').trim();
+
+  G.results.push({ persona: p, response: studentResponse, evaluation: cleanText, decision: isPass ? 'MONTEZ' : 'RETENTEZ' });
+
+  document.getElementById('eval-loading').style.display  = 'none';
+  const evalResp = document.getElementById('eval-response');
+  evalResp.style.display = 'flex';
+
+  document.getElementById('eval-verdict').textContent = `ÉVALUATION — ${p.nom} / ${p.chapeau}`;
+  document.getElementById('eval-text').textContent    = cleanText;
+
+  const decEl = document.getElementById('eval-decision');
+  const actEl = document.getElementById('eval-actions');
+  actEl.innerHTML = '';
+
+  if (isPass) {
+    decEl.textContent = '▲  ACCÈS ACCORDÉ — VOUS POUVEZ MONTER';
+    decEl.className   = 'eval-decision pass';
+
+    const btnNext = document.createElement('button');
+    btnNext.className = 'btn primary';
+    const hasNext = idx + 1 < PERSONAS.length;
+
+    if (hasNext) {
+      const nextP = PERSONAS[idx + 1];
+      btnNext.textContent = `[ CONTINUER → ÉTAGE ${pad3(nextP.floor)} ]`;
+      btnNext.onclick = () => {
+        G.personaIndex++;
+        G.floor = p.floor;
+        animateElevator(p.floor, nextP.floor, () => showPersona(G.personaIndex));
+      };
+    } else {
+      btnNext.textContent = '[ MONTER AU 100e — PITCH FINAL ]';
+      btnNext.onclick = () => animateElevator(p.floor, 100, showBoardroom);
+    }
+    actEl.appendChild(btnNext);
+
+  } else {
+    decEl.textContent = '▼  ACCÈS REFUSÉ — RÉPONDEZ À NOUVEAU';
+    decEl.className   = 'eval-decision retry';
+    G.results.pop();
+
+    const btnRetry = document.createElement('button');
+    btnRetry.textContent = '[ RÉESSAYER ]';
+    btnRetry.className   = 'btn primary';
+    btnRetry.onclick     = () => showPersona(idx);
+    actEl.appendChild(btnRetry);
+
+    const btnSkip = document.createElement('button');
+    btnSkip.textContent = '[ PASSER · MODE DÉMO ]';
+    btnSkip.className   = 'btn ghost';
+    btnSkip.onclick = () => {
+      G.results.push({ persona: p, response: studentResponse, evaluation: cleanText, decision: 'DÉMO' });
+      const hasNext = idx + 1 < PERSONAS.length;
+      if (hasNext) {
+        const nextP = PERSONAS[idx + 1];
+        G.personaIndex++; G.floor = p.floor;
+        animateElevator(p.floor, nextP.floor, () => showPersona(G.personaIndex));
+      } else { showSummary(); }
+    };
+    actEl.appendChild(btnSkip);
+  }
+}
+
+// ============================================================
+// RAPPORT FINAL
+// ============================================================
+// ============================================================
+// BOARDROOM — ÉTAGE 100
+// ============================================================
+const BOARDROOM_FREEZE_AT = 9.5;
+
+function showBoardroom() {
+  showScreen('screen-boardroom');
+  updateHUD(100, 'PITCH FINAL — SALLE DU CONSEIL');
+  document.getElementById('boardroom-entry-wrap').style.display = 'block';
+  document.getElementById('boardroom-room-wrap').style.display = 'none';
+
+  const video = document.getElementById('boardroom-entry-video');
+  if (video._rafId) { cancelAnimationFrame(video._rafId); video._rafId = null; }
+  video.oncanplay = null; video.onerror = null;
+  let froze = false;
+
+  function doFreeze() {
+    if (froze) return; froze = true;
+    if (video._rafId) { cancelAnimationFrame(video._rafId); video._rafId = null; }
+    video.pause();
+    document.getElementById('boardroom-entry-wrap').style.display = 'none';
+    const room = document.getElementById('boardroom-room-wrap');
+    room.style.display = 'block';
+    document.getElementById('board-session-id').textContent = G.sessionId;
+    document.getElementById('board-proj-title').textContent = G.title;
+    document.getElementById('boardroom-pitch').value = '';
+    document.getElementById('board-char-count').textContent = '0 / min. 80 car.';
+    // Re-déclencher l'animation zoom
+    const img = room.querySelector('.board-bg-img');
+    img.style.animation = 'none'; img.offsetHeight; img.style.animation = '';
+  }
+  function watch() {
+    if (video.currentTime >= BOARDROOM_FREEZE_AT) doFreeze();
+    else if (!video.paused && !video.ended) video._rafId = requestAnimationFrame(watch);
+  }
+  video.onerror = doFreeze;
+  video.oncanplay = () => video.play().then(() => { video._rafId = requestAnimationFrame(watch); }).catch(doFreeze);
+  video.src = 'video/scene7x.mp4';
+  video.currentTime = 0;
+  video.load();
+}
+
+document.getElementById('boardroom-pitch').addEventListener('input', function() {
+  document.getElementById('board-char-count').textContent = `${this.value.length} / min. 80 car.`;
+});
+
+document.getElementById('btn-pitch-submit').addEventListener('click', async () => {
+  const pitch = document.getElementById('boardroom-pitch').value.trim();
+  if (pitch.length < 80) { toast('Développez davantage votre pitch (min. 80 caractères).'); return; }
+  G.finalPitch = pitch;
+  await showVerdict(pitch);
+});
+
+async function showVerdict(pitch) {
+  showScreen('screen-verdict');
+  updateHUD(100, 'DÉLIBÉRATION DU PANEL');
+
+  const video   = document.getElementById('verdict-video');
+  const overlay = document.getElementById('verdict-overlay');
+  overlay.style.display = 'flex';
+  document.getElementById('verdict-avg-row').classList.remove('visible');
+  const decEl = document.getElementById('verdict-decision-el');
+  decEl.classList.remove('visible','accord','refus');
+
+  // Vidéo de réaction en boucle pendant les scores
+  video.src = 'video/Scene8x.mp4';
+  video.loop = true; video.muted = false;
+  video.load(); video.play().catch(() => {});
+
+  const scores = await callGeminiDragonsDen(pitch);
+  await animateScoreBars(scores);
+  await delay(400);
+
+  const vals = ['noir','rouge','jaune','blanc','vert','bleu'].map(k => scores[k] ?? 60);
+  const avg  = Math.round(vals.reduce((a,b) => a+b, 0) / 6);
+  const won  = avg >= 65;
+
+  document.getElementById('verdict-avg-value').textContent = avg;
+  document.getElementById('verdict-avg-row').classList.add('visible');
+  await delay(700);
+
+  decEl.textContent = won ? '✓  ACCORD — PROJET APPROUVÉ' : '✗  REFUS — CONCEPT À REVOIR';
+  decEl.classList.add('visible', won ? 'accord' : 'refus');
+  await delay(2200);
+
+  // Vidéo de conclusion
+  overlay.style.display = 'none';
+  video.loop = false;
+  video.src = won ? 'video/scene9x.mp4' : 'video/scene10x.mp4';
+  video.load(); video.play().catch(() => {});
+  let done = false;
+  function finish() { if (done) return; done = true; showSummary(); }
+  video.onended = finish;
+  // Victoire : stoppe à 3.5s puis passe au rapport
+  if (won) setTimeout(finish, 3500);
+  else     setTimeout(finish, 20000);
+}
+
+async function animateScoreBars(scores) {
+  const hats = [
+    { id: 'noir',  label: 'CHAPEAU NOIR',  color: '#646464' },
+    { id: 'rouge', label: 'CHAPEAU ROUGE', color: '#7a2828' },
+    { id: 'jaune', label: 'CHAPEAU JAUNE', color: '#7a6820' },
+    { id: 'blanc', label: 'CHAPEAU BLANC', color: '#888888' },
+    { id: 'vert',  label: 'CHAPEAU VERT',  color: '#286828' },
+    { id: 'bleu',  label: 'CHAPEAU BLEU',  color: '#204080' },
+  ];
+  const container = document.getElementById('verdict-scores');
+  container.innerHTML = '';
+  for (const hat of hats) {
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    row.innerHTML = `
+      <div class="score-hat-label">${hat.label}</div>
+      <div class="score-track"><div class="score-fill" style="background:${hat.color}"></div></div>
+      <div class="score-pct">--</div>`;
+    container.appendChild(row);
+    await delay(250); row.classList.add('visible'); await delay(150);
+    const pct = scores[hat.id] ?? 60;
+    row.querySelector('.score-fill').style.width  = `${pct}%`;
+    row.querySelector('.score-pct').textContent   = `${pct}%`;
+    await delay(950);
+  }
+}
+
+async function callGeminiDragonsDen(pitch) {
+  const apiUrl = CONFIG.VERCEL_API_URL.trim();
+  const key    = CONFIG.GEMINI_API_KEY.trim();
+  const feedbackCtx = G.results.map(r =>
+    `${r.persona.chapeau} (${r.persona.nom}): ${r.evaluation || r.eval || 'non disponible'}`
+  ).join('\n');
+
+  if (!apiUrl.startsWith('https://') && !key) {
+    await delay(1200);
+    return {
+      noir:  Math.floor(52 + Math.random() * 38),
+      rouge: Math.floor(52 + Math.random() * 38),
+      jaune: Math.floor(52 + Math.random() * 38),
+      blanc: Math.floor(52 + Math.random() * 38),
+      vert:  Math.floor(52 + Math.random() * 38),
+      bleu:  Math.floor(52 + Math.random() * 38),
+    };
+  }
+  const url = apiUrl.startsWith('https://')
+    ? apiUrl
+    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+
+  const prompt = `Tu es un panel d'investisseurs Dragon's Den spécialisés en design graphique. Un étudiant présente son concept révisé après les rétroactions des 6 chapeaux de De Bono.\n\nTitre: "${G.title}"\nConcept original: "${G.brief}"\nRétroactions reçues:\n${feedbackCtx}\nPitch final: "${pitch}"\n\nÉvalue si l'étudiant a intégré les rétroactions. Retourne UNIQUEMENT un JSON valide (sans markdown):\n{"noir":<0-100>,"rouge":<0-100>,"jaune":<0-100>,"blanc":<0-100>,"vert":<0-100>,"bleu":<0-100>}`;
+  try {
+    const res  = await fetch(url,
+      { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] }) });
+    const data = await res.json();
+    const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    return JSON.parse(raw.replace(/```json?|```/g,'').trim());
+  } catch { return { noir:62, rouge:68, jaune:71, blanc:65, vert:58, bleu:64 }; }
+}
+
+// ============================================================
+function showSummary() {
+  showScreen('screen-summary');
+  updateHUD(G.floor, 'RAPPORT DE SESSION');
+
+  const now = new Date();
+  const fmt = n => String(n).padStart(2, '0');
+  document.getElementById('summary-meta').textContent =
+    `SESSION: ${G.sessionId}  ·  ${fmt(now.getDate())}/${fmt(now.getMonth()+1)}/${now.getFullYear()}  ·  ÉTAGES: ${G.results.length}/6`;
+
+  const grid = document.getElementById('summary-results');
+  grid.innerHTML = '';
+
+  // Remplir les résultats réels d'abord
+  const filledIds = new Set(G.results.map(r => r.persona.id));
+
+  // On affiche toujours les 6 cartes (futures = grisées si pas encore jouées)
+  const allPersonas = [
+    ...G.results.map(r => ({ result: r, persona: r.persona })),
+    ...PERSONAS.filter(p => !filledIds.has(p.id)).map(p => ({ result: null, persona: p })),
+  ];
+
+  allPersonas.forEach(({ result: r, persona: p }) => {
+    const card = document.createElement('div');
+    card.className = 'rcard' + (r ? '' : ' rcard-pending');
+
+    // Décision
+    let badgeClass = 'demo', badgeLabel = '— EN ATTENTE';
+    let floorNum = pad3(p.floor);
+    let floorStrip = `L'ÉTAGE ${pad3(p.floor)}`;
+
+    if (r) {
+      if (r.decision === 'MONTEZ') {
+        badgeClass = 'pass'; badgeLabel = '✓ VALIDÉ';
+        floorNum   = pad3(p.floor);
+        floorStrip = `L'ÉTAGE ${pad3(p.floor)}`;
+      } else if (r.decision === 'DÉMO') {
+        badgeClass = 'demo'; badgeLabel = '→ DÉMO';
+        floorNum   = pad3(p.floor);
+        floorStrip = `L'ÉTAGE ${pad3(p.floor)}`;
+      } else {
+        badgeClass = 'retry'; badgeLabel = '✗ À RÉVISER';
+        floorNum   = pad3(p.floor);
+        floorStrip = `EN ROUTE VERS L'ÉTAGE ${pad3(p.floor)}`;
+      }
+    }
+
+    const shortResp = r ? (r.response.length > 180 ? r.response.substring(0, 180) + '…' : r.response) : '';
+    const evalTxt   = r ? r.evaluation : '';
+
+    // Photo : img si le fichier existe, sinon placeholder coloré
+    const photoHTML = p.photo
+      ? `<div class="rcard-photo-wrap">
+           <img class="rcard-photo" src="${p.photo}"
+             onerror="this.parentElement.innerHTML='<div class=\\'rcard-photo-placeholder\\'>${p.nom}</div>'"
+             alt="${p.nom}">
+         </div>`
+      : `<div class="rcard-photo-placeholder">${p.nom}</div>`;
+
+    card.innerHTML = `
+      <div class="rcard-visual" style="background:${p.accentColor || '#0d0d0d'}">
+        <div class="rcard-num">${floorNum}</div>
+        ${photoHTML}
+        <div class="rcard-floor-strip">${floorStrip}</div>
+      </div>
+      <div class="rcard-info">
+        <div class="rcard-meta">
+          <div class="rcard-chapeau">${p.chapeau} — ${p.nom} · ÉT.${pad3(p.floor)}</div>
+          <div class="rcard-badge ${badgeClass}">${badgeLabel}</div>
+        </div>
+        ${shortResp ? `<div class="rcard-response">"${shortResp}"</div>` : ''}
+        ${evalTxt   ? `<div class="rcard-eval">${evalTxt}</div>` : ''}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ============================================================
+// ÉVÉNEMENTS
+// ============================================================
+document.getElementById('btn-start').addEventListener('click', () => {
+  G.sessionId = genSessionId();
+  document.getElementById('brief-session-id').textContent = G.sessionId;
+  updateHUD(1, 'HALL D\'ACCUEIL — RÉCEPTION');
+  showScreen('screen-brief');
+});
+
+// ── [DEV] Raccourci rapport final ──────────────────────────────────────────
+document.getElementById('dev-rapport-link').addEventListener('click', () => {
+  // [DEV] Simule la fin de la scène de Martine (dernier persona, idx=5)
+  G.sessionId    = genSessionId();
+  G.title        = '[DÉMO] Campagne Festival de Mégantic 2025';
+  G.brief        = 'Concept typographique en noir et blanc avec grain argentique, évoquant les affiches du cinéma muet. Palette monochrome, typo serif condensée, grain de film 35mm simulé en CSS.';
+  G.floor        = 97;
+  G.personaIndex = 5;
+  G.results      = PERSONAS.map(p => ({
+    persona:    p,
+    response:   'Réponse de démonstration — mode développement.',
+    evaluation: 'Évaluation IA simulée — synthèse cohérente avec les rétroactions reçues.',
+    decision:   'MONTEZ',
+  }));
+
+  // Afficher l'écran d'évaluation de Martine avec le bouton PITCH FINAL
+  const p = PERSONAS[5];
+  showScreen('screen-evaluation');
+  document.getElementById('eval-header-name').textContent = `${p.nom} — ${p.chapeau}`;
+  document.getElementById('eval-loading').style.display   = 'none';
+  const evalResp = document.getElementById('eval-response');
+  evalResp.style.display = 'flex';
+  document.getElementById('eval-verdict').textContent = `ÉVALUATION — ${p.nom} / ${p.chapeau}`;
+  document.getElementById('eval-text').textContent    = 'Synthèse exemplaire. Vous avez su orchestrer les différentes perspectives avec rigueur. La démarche est claire, le processus bien défini.';
+  const decEl = document.getElementById('eval-decision');
+  decEl.textContent = '▲  ACCÈS ACCORDÉ — VOUS POUVEZ MONTER';
+  decEl.className   = 'eval-decision pass';
+  const actEl = document.getElementById('eval-actions');
+  actEl.innerHTML   = '';
+  const btnNext = document.createElement('button');
+  btnNext.className   = 'btn primary';
+  btnNext.textContent = '[ MONTER AU 100e — PITCH FINAL ]';
+  btnNext.onclick     = () => animateElevator(p.floor, 100, showBoardroom);
+  actEl.appendChild(btnNext);
+});
+
+document.getElementById('btn-submit-brief').addEventListener('click', () => {
+  const title = document.getElementById('input-title').value.trim();
+  const brief = document.getElementById('input-brief').value.trim();
+  if (!title) { toast('Nommez votre projet avant de continuer.'); return; }
+  if (brief.length < 30) { toast('Décrivez davantage votre concept (min. 30 caractères).'); return; }
+  G.title = title; G.brief = brief; G.floor = 1;
+  G.personaIndex = 0; G.results = [];
+  animateElevator(1, PERSONAS[0].floor, () => showPersona(0));
+});
+
+document.getElementById('response-input').addEventListener('input', function () {
+  document.getElementById('char-count').textContent = this.value.length;
+});
+
+document.getElementById('btn-submit-response').addEventListener('click', () => {
+  const val = document.getElementById('response-input').value.trim();
+  if (val.length < 20) { toast('Réponse trop courte — développez votre argumentation.'); return; }
+  showEvaluation(G.personaIndex, val);
+});
+
+document.getElementById('btn-restart').addEventListener('click', () => {
+  G.title = ''; G.brief = ''; G.floor = 1; G.personaIndex = 0; G.results = [];
+  document.getElementById('hud-cam').textContent    = 'CAM-01 | ASCENSEUR-STUDIO-A';
+  document.getElementById('hud-proto').textContent  = 'PROTO: ACTIF';
+  updateHUD(1, 'HALL D\'ACCUEIL');
+  showScreen('screen-title');
+});
+
+// ============================================================
+// EXPORT PDF
+// ============================================================
+document.getElementById('btn-print-landscape').addEventListener('click', () => {
+  document.body.classList.remove('print-portrait');
+  document.body.classList.add('print-landscape');
+  setTimeout(() => { window.print(); }, 80);
+});
+
+document.getElementById('btn-print-portrait').addEventListener('click', () => {
+  document.body.classList.remove('print-landscape');
+  document.body.classList.add('print-portrait');
+  setTimeout(() => { window.print(); }, 80);
+});
+
+// ============================================================
+// INIT
+// ============================================================
+startClock();
+runBoot();
+</script>
+</body>
+</html>
