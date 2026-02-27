@@ -1,10 +1,10 @@
-<!-- L'ASCENSEUR â Version 1.1 â 2026-02-27 -->
+<!-- L'ASCENSEUR — Version 1.1 — 2026-02-27 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>L'ASCENSEUR â 6 Chapeaux du Studio</title>
+  <title>L'ASCENSEUR — 6 Chapeaux du Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;700&display=swap" rel="stylesheet">
   <style>
@@ -115,30 +115,30 @@
     .title-sub { font-size: 15px; letter-spacing: 0.3em; color: #3e3e3e; text-align: center; }
 
     /* ===== ANIMATION C-ASCENSEUR ===== */
-    /* Le wrapper coupe le C quand il est sous la ligne â crÃ©e l'effet "L'AS ENSEUR" */
+    /* Le wrapper coupe le C quand il est sous la ligne — crée l'effet "L'AS ENSEUR" */
     .title-c-clip {
       display: inline-block;
       overflow: hidden;
       line-height: 1em;
       vertical-align: bottom;
-      /* padding-top crÃ©e un espace de dÃ©bordement vers le haut pour l'overshoot ;
-         margin-top nÃ©gatif compense pour garder l'alignement du mot intact */
+      /* padding-top crée un espace de débordement vers le haut pour l'overshoot ;
+         margin-top négatif compense pour garder l'alignement du mot intact */
       padding-top: 0.38em;
       margin-top: -0.38em;
     }
-    /* Le C reste cachÃ© sous la ligne jusqu'au dÃ©clenchement JS */
+    /* Le C reste caché sous la ligne jusqu'au déclenchement JS */
     .title-c-letter {
       display: inline-block;
-      transform: translateY(130%); /* position de dÃ©part : sous la zone de clip */
+      transform: translateY(130%); /* position de départ : sous la zone de clip */
     }
-    /* La classe .animating est ajoutÃ©e par JS 1s aprÃ¨s l'apparition du titre */
+    /* La classe .animating est ajoutée par JS 1s après l'apparition du titre */
     .title-c-letter.animating {
       animation: c-monte-ascenseur 0.92s linear forwards;
     }
-    /* MontÃ©e rapide â dÃ©passe vers le haut (overshoot) â redescend â petit rebond â pose */
+    /* Montée rapide → dépasse vers le haut (overshoot) → redescend → petit rebond → pose */
     @keyframes c-monte-ascenseur {
-      0%   { transform: translateY(130%);  }   /* dÃ©part sous la ligne */
-      58%  { transform: translateY(-28%);  }   /* dÃ©passe le haut du mot */
+      0%   { transform: translateY(130%);  }   /* départ sous la ligne */
+      58%  { transform: translateY(-28%);  }   /* dépasse le haut du mot */
       74%  { transform: translateY(7%);    }   /* redescend trop bas */
       87%  { transform: translateY(-6%);   }   /* second micro-rebond */
       100% { transform: translateY(0%);    }   /* pose finale */
@@ -217,7 +217,7 @@
     .elev-status { font-size: 15px; letter-spacing: 0.22em; color: #363636; animation: status-blink 1s ease-in-out infinite; }
     @keyframes status-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-    /* ===== PERSONA â layout plein Ã©cran ===== */
+    /* ===== PERSONA — layout plein écran ===== */
     #screen-persona {
       background: #000; padding: 0; gap: 0;
       overflow: hidden;
@@ -235,7 +235,7 @@
       to   { transform: translateY(0%);   }
     }
 
-    /* VidÃ©o en fond plein Ã©cran */
+    /* Vidéo en fond plein écran */
     .persona-cam-view {
       position: absolute; inset: 0;
       background: #050505; overflow: hidden;
@@ -246,7 +246,7 @@
       object-fit: cover; object-position: center center;
       display: block;
       filter: saturate(0.4) contrast(1.12) brightness(0.82);
-      /* Couche GPU dÃ©diÃ©e â Ã©vite que le dÃ©codage vidÃ©o partage le thread de rendu */
+      /* Couche GPU dédiée — évite que le décodage vidéo partage le thread de rendu */
       will-change: transform;
       transform: translateZ(0);
     }
@@ -260,16 +260,16 @@
     .cctv-svg-overlay svg {
       width: 100%; height: 100%;
       opacity: 0.55;
-      /* Filtre nÃ©on statique â le filter ne bouge PAS pour Ã©viter la recomposition Ã  chaque frame */
+      /* Filtre néon statique — le filter ne bouge PAS pour éviter la recomposition à chaque frame */
       filter:
         drop-shadow(0 0 1px #6FBE52)
         drop-shadow(0 0 5px rgba(111, 190, 82, 0.65))
         drop-shadow(0 0 12px rgba(111, 190, 82, 0.35));
-      /* Seule l'opacitÃ© s'anime â property bon marchÃ© sur GPU composite layer */
+      /* Seule l'opacité s'anime — property bon marché sur GPU composite layer */
       animation: crt-flicker 5.5s ease-in-out infinite;
       will-change: opacity;
     }
-    /* LÃ©gÃ¨re instabilitÃ© du faisceau â opacitÃ© seulement (pas de filter) */
+    /* Légère instabilité du faisceau — opacité seulement (pas de filter) */
     @keyframes crt-flicker {
       0%,  100% { opacity: 0.55; }
       18%        { opacity: 0.48; }
@@ -277,7 +277,7 @@
       62%        { opacity: 0.50; }
       80%        { opacity: 0.57; }
     }
-    /* Gel d'image â intensitÃ© nÃ©on maximale (filter mis Ã  jour une seule fois) */
+    /* Gel d'image — intensité néon maximale (filter mis à jour une seule fois) */
     .freeze-active .cctv-svg-overlay svg {
       opacity: 0.82;
       filter:
@@ -287,14 +287,14 @@
         drop-shadow(0 0 40px rgba(111, 190, 82, 0.25));
       animation: none;
     }
-    /* Pendant la lecture vidÃ©o : SVG data-stream suspendu pour libÃ©rer le thread */
+    /* Pendant la lecture vidéo : SVG data-stream suspendu pour libérer le thread */
     .video-playing .cctv-data-group {
       animation-play-state: paused;
     }
     .video-playing .cctv-svg-overlay svg {
       animation-play-state: paused;
     }
-    /* Animation subtile des lignes de donnÃ©es Ã  droite */
+    /* Animation subtile des lignes de données à droite */
     @keyframes data-scroll {
       0%   { transform: translateY(0); }
       100% { transform: translateY(-15.3px); } /* 1 ligne de hauteur */
@@ -318,7 +318,7 @@
     .det-face::after  { content:''; position:absolute; bottom:-1px; right:-1px; width:10px; height:10px; border-bottom:2px solid rgba(200,200,200,0.55); border-right:2px solid rgba(200,200,200,0.55); }
     .det-label { position:absolute; top:-16px; left:0; font-size:8px; color:rgba(200,200,200,0.4); letter-spacing:0.1em; white-space:nowrap; }
 
-    /* Ãtiquette nom persona â en haut Ã  gauche */
+    /* Étiquette nom persona — en haut à gauche */
     .persona-overlay-bottom {
       position: absolute; bottom: auto; top: 0; left: 0; right: 0;
       padding: 40px 18px 16px;
@@ -342,7 +342,7 @@
     }
     .freeze-badge.visible { display: block; }
 
-    /* Dialogue en overlay bas â gradient sombre remontant */
+    /* Dialogue en overlay bas — gradient sombre remontant */
     .persona-dialog {
       position: absolute; bottom: 0; left: 0; right: 0;
       z-index: 20;
@@ -357,13 +357,13 @@
       display: flex; flex-direction: column; gap: 10px;
       max-height: 60vh;
       overflow-y: auto;
-      /* centrer sur grands Ã©crans */
+      /* centrer sur grands écrans */
       max-width: 720px;
       margin: 0 auto;
-      /* mais rester collÃ© en bas */
+      /* mais rester collé en bas */
       right: 0; left: 0;
     }
-    /* hack pour que le gradient couvre bien tout le bas mÃªme sur large */
+    /* hack pour que le gradient couvre bien tout le bas même sur large */
     #screen-persona::after {
       content: '';
       position: absolute; bottom: 0; left: 0; right: 0;
@@ -374,7 +374,7 @@
 
     .dialog-protocol { font-size: 13px; letter-spacing: 0.3em; color: rgba(150,150,150,0.6); }
 
-    /* Chat â style sous-titres avec fond semi-opaque */
+    /* Chat — style sous-titres avec fond semi-opaque */
     #chat-log { display: flex; flex-direction: column; gap: 8px; }
     .chat-msg { max-width: 90%; display: flex; flex-direction: column; gap: 2px; }
     .chat-msg.persona { align-self: flex-start; }
@@ -386,11 +386,11 @@
     .chat-msg.persona .msg-bubble { color: #d0d0d0; border-left: 2px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); }
     .chat-msg.player  .msg-bubble { color: #888; border-right: 2px solid rgba(255,255,255,0.08); font-style: italic; }
 
-    /* Champ rÃ©ponse */
+    /* Champ réponse */
     #response-section { display: none; flex-direction: column; gap: 8px; margin-top: 6px; }
     /* Conteneur relatif pour positionner le point vert */
     .response-wrap { position: relative; }
-    /* Point vert actif â indicateur d'Ã©coute */
+    /* Point vert actif — indicateur d'écoute */
     .input-ready-dot {
       position: absolute; top: -6px; right: -6px;
       width: 9px; height: 9px; border-radius: 50%;
@@ -419,7 +419,7 @@
     .dialog-foot { display: flex; justify-content: space-between; align-items: center; }
     .char-count { font-size: 13px; color: rgba(150,150,150,0.4); letter-spacing: 0.15em; }
 
-    /* ===== ÃVALUATION ===== */
+    /* ===== ÉVALUATION ===== */
     #screen-evaluation {
       background: #040404; padding: 40px 20px; gap: 0;
       align-items: center; justify-content: center;
@@ -455,7 +455,7 @@
     .eval-decision.retry { border-color: #2e2e2e; color: #606060; }
     .eval-actions  { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    /* ===== RÃSUMÃ ===== */
+    /* ===== RÉSUMÉ ===== */
     #screen-summary {
       background: #040404; padding: 0; gap: 0;
       align-items: flex-start; justify-content: flex-start; overflow-y: auto;
@@ -495,13 +495,13 @@
       from { transform: scale(1.0); }
       to   { transform: scale(1.22); }
     }
-    /* Overlay centrÃ© sur la salle */
+    /* Overlay centré sur la salle */
     .board-overlay {
       position: absolute; inset: 0; z-index: 10;
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 16px; padding: 24px 20px;
     }
-    /* Ãcran de projection â titre du concept */
+    /* Écran de projection — titre du concept */
     .board-projection {
       width: 100%; max-width: 600px;
       background: rgba(220,218,255,0.06);
@@ -588,7 +588,7 @@
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 380px) { .title-main { font-size: 48px; } .elev-floor-num { font-size: 80px; } }
-    /* Sur petits Ã©crans, la zone dialogue peut prendre plus de place */
+    /* Sur petits écrans, la zone dialogue peut prendre plus de place */
     @media (max-height: 600px) { .persona-dialog { max-height: 70vh; } }
 
     /* ===== RAPPORT FINAL ===== */
@@ -603,7 +603,7 @@
       padding: 28px 24px 40px;
       display: flex; flex-direction: column; gap: 20px;
     }
-    /* En-tÃªte rapport */
+    /* En-tête rapport */
     .rapport-header {
       border: 1px solid #1e1e1e;
       padding: 14px 18px 12px;
@@ -686,14 +686,14 @@
       opacity: 0.13; mix-blend-mode: overlay;
       pointer-events: none; z-index: 4;
     }
-    /* Placeholder colorÃ© quand pas de photo */
+    /* Placeholder coloré quand pas de photo */
     .rcard-photo-placeholder {
       position: absolute; inset: 0; z-index: 3;
       display: flex; align-items: center; justify-content: center;
       font-size: 11px; letter-spacing: 0.3em; color: rgba(255,255,255,0.15);
     }
 
-    /* Bande de sol â Ã©tage */
+    /* Bande de sol — étage */
     .rcard-floor-strip {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 5;
       padding: 5px 10px;
@@ -785,7 +785,7 @@
     <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
       <div id="hud-clock">--/--/---- --:--:--</div>
       <div><span class="rec-dot"></span>REC</div>
-      <!-- Indicateur d'Ã©tage -->
+      <!-- Indicateur d'étage -->
       <div id="hud-floor-indicator" style="
         display:flex; align-items:center; gap:6px;
         margin-top:4px;
@@ -800,13 +800,13 @@
           font-size:22px; color:rgba(150,150,150,0.5);
           animation: rec-blink 1.6s ease-in-out infinite;
           display:none;
-        ">â</div>
+        ">↑</div>
       </div>
     </div>
   </div>
   <div id="hud-bottom">
     <div>
-      <div>ÃTAGE: <span id="hud-floor">001</span> / 100</div>
+      <div>ÉTAGE: <span id="hud-floor">001</span> / 100</div>
       <div style="margin-top:3px" id="hud-location">HALL D'ACCUEIL</div>
     </div>
     <div class="signal-bars">
@@ -825,33 +825,33 @@
 
 <!-- ================================================================ TITRE -->
 <div id="screen-title" class="screen">
-  <div class="title-eyebrow">AGENCE STUDIO X â SYSTÃME DE FORMATION CRÃATIVE</div>
+  <div class="title-eyebrow">AGENCE STUDIO X — SYSTÈME DE FORMATION CRÉATIVE</div>
   <div class="title-main">L'AS<span class="title-c-clip"><span class="title-c-letter">C</span></span>ENSEUR</div>
-  <div class="title-sub">LES 6 CHAPEAUX DU STUDIO Â· JEU D'ARGUMENTATION CRÃATIVE</div>
-  <button class="btn primary" id="btn-start">[ DÃMARRER LA SESSION ]</button>
-  <div class="muted" style="text-align:center;margin-top:8px">PROTOTYPE MVP Â· ÃTAGES NOIR & ROUGE</div>
+  <div class="title-sub">LES 6 CHAPEAUX DU STUDIO · JEU D'ARGUMENTATION CRÉATIVE</div>
+  <button class="btn primary" id="btn-start">[ DÉMARRER LA SESSION ]</button>
+  <div class="muted" style="text-align:center;margin-top:8px">PROTOTYPE MVP · ÉTAGES NOIR & ROUGE</div>
 </div>
 
 <!-- ================================================================ BRIEF -->
 <div id="screen-brief" class="screen">
   <div class="brief-wrap">
-    <div class="dossier-box" data-label="MISSION ASSIGNÃE">
+    <div class="dossier-box" data-label="MISSION ASSIGNÉE">
       <div class="dossier-title">DOSSIER CONFIDENTIEL</div>
-      <div class="dossier-id-line">ID: <span id="brief-session-id">---</span> Â· NIVEAU: DESIGNER JUNIOR</div>
+      <div class="dossier-id-line">ID: <span id="brief-session-id">---</span> · NIVEAU: DESIGNER JUNIOR</div>
     </div>
     <div>
-      <label class="field-label">01 â TITRE DU MANDAT / NOM DU PROJET</label>
+      <label class="field-label">01 — TITRE DU MANDAT / NOM DU PROJET</label>
       <textarea class="field-input single" id="input-title"
-        placeholder="ex: Campagne affiche Festival de MÃ©gantic 2025..."></textarea>
+        placeholder="ex: Campagne affiche Festival de Mégantic 2025..."></textarea>
     </div>
     <div>
-      <label class="field-label">02 â DESCRIPTION DU CONCEPT VISUEL</label>
+      <label class="field-label">02 — DESCRIPTION DU CONCEPT VISUEL</label>
       <textarea class="field-input" id="input-brief" rows="5"
-        placeholder="DÃ©crivez votre concept : approche visuelle, palette, typographie, public cible, intention crÃ©ative..."></textarea>
+        placeholder="Décrivez votre concept : approche visuelle, palette, typographie, public cible, intention créative..."></textarea>
     </div>
     <div class="field-foot">
-      <div class="muted" id="dev-rapport-link" title="[DEV] AccÃ¨s direct au rapport" style="cursor:pointer;user-select:none;">AUTHENTIFICATION REQUISE</div>
-      <button class="btn primary" id="btn-submit-brief">[ ACCÃDER Ã L'ASCENSEUR â ]</button>
+      <div class="muted" id="dev-rapport-link" title="[DEV] Accès direct au rapport" style="cursor:pointer;user-select:none;">AUTHENTIFICATION REQUISE</div>
+      <button class="btn primary" id="btn-submit-brief">[ ACCÉDER À L'ASCENSEUR → ]</button>
     </div>
   </div>
 </div>
@@ -859,26 +859,26 @@
 <!-- ================================================================ ASCENSEUR -->
 <div id="screen-elevator" class="screen">
   <div class="elev-wrap">
-    <div class="elev-floor-label">ÃTAGE EN COURS</div>
+    <div class="elev-floor-label">ÉTAGE EN COURS</div>
     <div class="elev-floor-num" id="elev-num">001</div>
-    <div class="elev-destination" id="elev-dest">EN ROUTE VERS L'ÃTAGE 017</div>
+    <div class="elev-destination" id="elev-dest">EN ROUTE VERS L'ÉTAGE 017</div>
     <div class="elev-divider"></div>
-    <div class="elev-status" id="elev-status">MONTÃE EN COURS...</div>
+    <div class="elev-status" id="elev-status">MONTÉE EN COURS...</div>
   </div>
 </div>
 
 <!-- ================================================================ PERSONA -->
 <div id="screen-persona" class="screen">
   <div class="persona-cam-view" id="persona-cam-view">
-    <!-- VidÃ©o CCTV -->
+    <!-- Vidéo CCTV -->
     <video id="persona-video" class="cctv-video" playsinline preload="auto"></video>
 
-    <!-- Overlay SVG CCTV vert â design overlat copy.svg -->
+    <!-- Overlay SVG CCTV vert — design overlat copy.svg -->
     <div class="cctv-svg-overlay">
       <svg viewBox="0 0 1524 1044" preserveAspectRatio="none"
            fill="none" xmlns="http://www.w3.org/2000/svg">
 
-        <!-- Lignes de donnÃ©es droite â alternance longue/courte (data stream) -->
+        <!-- Lignes de données droite — alternance longue/courte (data stream) -->
         <g class="cctv-data-group" stroke="#6FBE52" stroke-width="2" stroke-miterlimit="10">
           <line x1="1473" y1="84"  x2="1524" y2="84"/>
           <line x1="1488" y1="99"  x2="1525" y2="99"/>
@@ -938,11 +938,11 @@
           <line x1="1488" y1="936" x2="1525" y2="936"/>
         </g>
 
-        <!-- Cadre principal (zone active vidÃ©o) -->
+        <!-- Cadre principal (zone active vidéo) -->
         <rect x="129" y="105.21" width="1272" height="789.76"
               stroke="#6FBE52" stroke-width="2.32" stroke-miterlimit="10"/>
 
-        <!-- Jauge gauche â tirets diagonaux Ã©pais (signal interlace) -->
+        <!-- Jauge gauche — tirets diagonaux épais (signal interlace) -->
         <g stroke="#6FBE52" stroke-width="12.47" stroke-miterlimit="10">
           <line x1="85.04" y1="106.89"  x2="108.75" y2="125.60"/>
           <line x1="85.04" y1="137.24"  x2="108.75" y2="155.95"/>
@@ -960,17 +960,17 @@
           <line x1="85.04" y1="501.42"  x2="108.75" y2="520.13"/>
         </g>
 
-        <!-- Ãquerre supÃ©rieure gauche -->
+        <!-- Équerre supérieure gauche -->
         <polyline stroke="#6FBE52" stroke-width="3" stroke-miterlimit="10"
           points="16.02,667.36 16.02,93.78 79.2,30.6 239.01,30.6"/>
 
-        <!-- Ãquerre infÃ©rieure droite -->
+        <!-- Équerre inférieure droite -->
         <polyline stroke="#6FBE52" stroke-width="3" stroke-miterlimit="10"
           points="937.22,1023.65 363.64,1023.65 300.46,960.47 300.46,800.66"/>
       </svg>
     </div>
 
-    <!-- DÃ©tection -->
+    <!-- Détection -->
     <div class="det-face"><div class="det-label" id="det-label">ID: ---</div></div>
     <div class="det-body"></div>
     <!-- Overlay bas -->
@@ -982,9 +982,9 @@
       <div class="p-chapeau" id="p-chapeau">---</div>
     </div>
     <div class="cam-label" id="p-cam">CAM-02</div>
-    <div class="cam-floor" id="p-floor-badge">ÃT.017</div>
+    <div class="cam-floor" id="p-floor-badge">ÉT.017</div>
     <!-- Gel image -->
-    <div class="freeze-badge" id="freeze-badge">ââ GEL D'IMAGE</div>
+    <div class="freeze-badge" id="freeze-badge">▌▌ GEL D'IMAGE</div>
   </div>
 
   <!-- Dialogue -->
@@ -995,17 +995,17 @@
       <div class="response-wrap">
         <span class="input-ready-dot"></span>
         <textarea class="response-area" id="response-input"
-          placeholder="Votre rÃ©ponse â dÃ©veloppez votre argumentation..."></textarea>
+          placeholder="Votre réponse — développez votre argumentation..."></textarea>
       </div>
       <div class="dialog-foot">
-        <div class="char-count"><span id="char-count">0</span> CARACTÃRES</div>
+        <div class="char-count"><span id="char-count">0</span> CARACTÈRES</div>
         <button class="btn primary" id="btn-submit-response">[ SOUMETTRE ]</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ================================================================ ÃVALUATION -->
+<!-- ================================================================ ÉVALUATION -->
 <div id="screen-evaluation" class="screen">
   <div class="eval-card">
   <div class="eval-header">
@@ -1017,7 +1017,7 @@
       <div class="loading-dots">
         <div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>
       </div>
-      <div class="loading-text">TRAITEMENT DE LA RÃPONSE...</div>
+      <div class="loading-text">TRAITEMENT DE LA RÉPONSE...</div>
     </div>
     <div class="eval-response" id="eval-response">
       <div class="eval-verdict" id="eval-verdict">---</div>
@@ -1031,32 +1031,32 @@
 
 <!-- ================================================================ BOARDROOM -->
 <div id="screen-boardroom" class="screen">
-  <!-- Phase 1 : vidÃ©o d'entrÃ©e (scene7x) -->
+  <!-- Phase 1 : vidéo d'entrée (scene7x) -->
   <div id="boardroom-entry-wrap" style="position:absolute;inset:0;">
     <video id="boardroom-entry-video" class="cctv-video" playsinline preload="auto"></video>
   </div>
-  <!-- Phase 2 : salle + Ã©cran de projection + pitch -->
+  <!-- Phase 2 : salle + écran de projection + pitch -->
   <div id="boardroom-room-wrap" style="display:none;position:absolute;inset:0;">
     <div class="board-bg-wrap">
       <img src="images/board0x.png" class="board-bg-img" alt="Salle du conseil">
     </div>
     <div class="board-overlay">
       <div class="board-projection">
-        <div class="board-proj-label">CONCEPT EN PRÃSENTATION</div>
+        <div class="board-proj-label">CONCEPT EN PRÉSENTATION</div>
         <div class="board-proj-title" id="board-proj-title">---</div>
       </div>
       <div class="board-form-panel">
         <div class="board-form-header">
-          <span>PITCH FINAL â ÃTAGE 100</span>
+          <span>PITCH FINAL — ÉTAGE 100</span>
           <span id="board-session-id">---</span>
         </div>
         <div class="board-form-body">
-          <label class="field-label">IntÃ©grez les rÃ©troactions des 6 experts dans votre concept bonifiÃ©</label>
+          <label class="field-label">Intégrez les rétroactions des 6 experts dans votre concept bonifié</label>
           <textarea class="field-input" id="boardroom-pitch" rows="5"
-            placeholder="PrÃ©sentez votre concept rÃ©visÃ© en tenant compte des rÃ©troactions reÃ§ues..."></textarea>
+            placeholder="Présentez votre concept révisé en tenant compte des rétroactions reçues..."></textarea>
           <div class="field-foot">
             <div class="muted" id="board-char-count">0 / min. 80 car.</div>
-            <button class="btn primary" id="btn-pitch-submit">[ PRÃSENTER AU PANEL â ]</button>
+            <button class="btn primary" id="btn-pitch-submit">[ PRÉSENTER AU PANEL → ]</button>
           </div>
         </div>
       </div>
@@ -1069,7 +1069,7 @@
   <video id="verdict-video" class="cctv-video" playsinline preload="auto"></video>
   <div id="verdict-overlay" class="verdict-overlay">
     <div class="verdict-inner">
-      <div class="verdict-panel-header">DÃLIBÃRATION DU PANEL</div>
+      <div class="verdict-panel-header">DÉLIBÉRATION DU PANEL</div>
       <div id="verdict-scores" class="verdict-scores-list"></div>
       <div id="verdict-avg-row" class="verdict-avg-row">
         <span class="verdict-avg-label">MOYENNE DU PANEL</span>
@@ -1097,20 +1097,20 @@
 
   <div class="rapport-page" id="rapport-page">
 
-    <!-- EN-TÃTE -->
+    <!-- EN-TÊTE -->
     <div class="rapport-header">
-      <div class="rapport-header-label">â RAPPORT DE SESSION â PROTOTYPE MVP â</div>
+      <div class="rapport-header-label">— RAPPORT DE SESSION — PROTOTYPE MVP —</div>
       <div class="rapport-title">RAPPORT DE SESSION</div>
-      <div class="rapport-meta" id="summary-meta">SESSION: --- Â· --/--/---- Â· ÃTAGES: 0/6</div>
+      <div class="rapport-meta" id="summary-meta">SESSION: --- · --/--/---- · ÉTAGES: 0/6</div>
     </div>
 
     <!-- GRILLE 6 CARTES -->
     <div class="rapport-grid" id="summary-results"></div>
 
-    <!-- ACTIONS (masquÃ©es Ã  l'impression) -->
+    <!-- ACTIONS (masquées à l'impression) -->
     <div class="rapport-actions no-print">
-      <button class="btn primary" id="btn-print-landscape">[ â EXPORTER PDF â PAYSAGE 3Ã2 ]</button>
-      <button class="btn primary" id="btn-print-portrait">[ â EXPORTER PDF â PORTRAIT 2Ã3 ]</button>
+      <button class="btn primary" id="btn-print-landscape">[ ↓ EXPORTER PDF — PAYSAGE 3×2 ]</button>
+      <button class="btn primary" id="btn-print-portrait">[ ↓ EXPORTER PDF — PORTRAIT 2×3 ]</button>
       <button class="btn ghost"  id="btn-restart">[ NOUVELLE SESSION ]</button>
     </div>
 
@@ -1120,25 +1120,25 @@
 <script>
 // ============================================================
 // CONFIGURATION
-// Ajoutez votre clÃ© Gemini pour activer l'IA rÃ©elle.
-// Sans clÃ© â mode dÃ©mo avec rÃ©ponses simulÃ©es.
+// Ajoutez votre clé Gemini pour activer l'IA réelle.
+// Sans clé → mode démo avec réponses simulées.
 // ============================================================
 const CONFIG = {
-  // â¬ Colle ici l'URL de ton projet Vercel une fois dÃ©ployÃ©
+  // ⬇ Colle ici l'URL de ton projet Vercel une fois déployé
   VERCEL_API_URL: '/api/evaluate',
   // GEMINI_API_KEY uniquement si tu veux tester EN LOCAL sans Vercel
   GEMINI_API_KEY: '',
 };
 
 // ============================================================
-// POINTS DE GEL VIDÃO
-// Ajustez si le gel arrive trop tÃ´t ou trop tard.
-// Claude = 8.04s total â gel Ã  6.0s par dÃ©faut
-// BÃ©atrice = 15.12s total â gel Ã  10.0s
-// Florence  = 15.12s total â gel Ã  10.0s par dÃ©faut
-// Antoine   = 10.04s total â gel Ã   7.0s par dÃ©faut
-// Gabriel   = 10.04s total â gel Ã   7.0s par dÃ©faut
-// Martine   = 10.04s total â gel Ã   7.0s par dÃ©faut
+// POINTS DE GEL VIDÉO
+// Ajustez si le gel arrive trop tôt ou trop tard.
+// Claude = 8.04s total → gel à 6.0s par défaut
+// Béatrice = 15.12s total → gel à 10.0s
+// Florence  = 15.12s total → gel à 10.0s par défaut
+// Antoine   = 10.04s total → gel à  7.0s par défaut
+// Gabriel   = 10.04s total → gel à  7.0s par défaut
+// Martine   = 10.04s total → gel à  7.0s par défaut
 // ============================================================
 const PAUSE_TIMES = {
   noir:  6.0,
@@ -1150,7 +1150,7 @@ const PAUSE_TIMES = {
 };
 
 // ============================================================
-// ÃTAT DU JEU
+// ÉTAT DU JEU
 // ============================================================
 const G = {
   title: '', brief: '',
@@ -1162,7 +1162,7 @@ const G = {
 
 // ============================================================
 // PERSONAS
-// SÃ©quence : Noir(17) â Rouge(33) â Jaune(50) â Blanc(67) â Vert(83) â Bleu(97)
+// Séquence : Noir(17) → Rouge(33) → Jaune(50) → Blanc(67) → Vert(83) → Bleu(97)
 // ============================================================
 const PERSONAS = [
   {
@@ -1172,49 +1172,49 @@ const PERSONAS = [
     titre: 'ANALYSTE CRITIQUE',
     chapeau: 'CHAPEAU NOIR',
     cam: 'CAM-02',
-    protocol: 'RISQUE & FAISABILITÃ',
+    protocol: 'RISQUE & FAISABILITÉ',
     video: 'video/scene01.mp4',
     photo: 'images/photo-claude-noir.png',
     accentColor: '#2a2a2a',
 
-    // Dialogue en 3 phases : icebreaker â rÃ©ponse joueur â question De Bono
+    // Dialogue en 3 phases : icebreaker → réponse joueur → question De Bono
     dialogue(title) {
       return [
         {
           from: 'persona',
-          text: `... IntÃ©ressant ce qu'il y a sur ta tablette. C'est quoi comme projet?`,
+          text: `... Intéressant ce qu'il y a sur ta tablette. C'est quoi comme projet?`,
         },
         {
           from: 'player',
-          text: `"${title}" â un concept pour le pitch au 100e.`,
+          text: `"${title}" — un concept pour le pitch au 100e.`,
         },
         {
           from: 'persona',
-          text: `Bien.\n\nAlors parlons-en franchement. OÃ¹ sont les failles de ce concept? Nommez-moi les risques techniques, les contraintes de prÃ©presse ou les enjeux Ã©thiques que vous avez anticipÃ©s. Je ne veux pas d'optimisme. Je veux de la luciditÃ©.`,
+          text: `Bien.\n\nAlors parlons-en franchement. Où sont les failles de ce concept? Nommez-moi les risques techniques, les contraintes de prépresse ou les enjeux éthiques que vous avez anticipés. Je ne veux pas d'optimisme. Je veux de la lucidité.`,
           isQuestion: true,
         },
       ];
     },
 
     buildSystemPrompt(title, brief) {
-      return `Chapeau Noir (Claude) â analyse critique. Projet: "${title}" / "${brief}". Cherche : risques techniques, contraintes prÃ©presse, faisabilitÃ©, enjeux Ã©thiques. 3-4 phrases en franÃ§ais canadien, EN PERSONNAGE. Fin : [DÃCISION: MONTEZ] si conscience critique rÃ©elle, sinon [DÃCISION: RETENTEZ].`;
+      return `Chapeau Noir (Claude) — analyse critique. Projet: "${title}" / "${brief}". Cherche : risques techniques, contraintes prépresse, faisabilité, enjeux éthiques. 3-4 phrases en français canadien, EN PERSONNAGE. Fin : [DÉCISION: MONTEZ] si conscience critique réelle, sinon [DÉCISION: RETENTEZ].`;
     },
-    mockPass: `Bien. Vous avez nommÃ© des contraintes rÃ©elles plutÃ´t que de vous rÃ©fugier derriÃ¨re l'esthÃ©tique. Cette luciditÃ© est rare chez un junior. Je reste sceptique sur quelques angles morts â mais pour l'instant, vous mÃ©ritez de monter.
+    mockPass: `Bien. Vous avez nommé des contraintes réelles plutôt que de vous réfugier derrière l'esthétique. Cette lucidité est rare chez un junior. Je reste sceptique sur quelques angles morts — mais pour l'instant, vous méritez de monter.
 
-[DÃCISION: MONTEZ]`,
-    mockRetry: `Ce que vous dÃ©crivez, c'est ce que vous voulez crÃ©er â pas ce qui peut mal tourner. OÃ¹ sont les risques de fichiers mal configurÃ©s pour l'impression? Les tensions Ã©thiques dans vos choix visuels? Recommencez. Pensez comme quelqu'un qui cherche Ã  vous faire Ã©chouer.
+[DÉCISION: MONTEZ]`,
+    mockRetry: `Ce que vous décrivez, c'est ce que vous voulez créer — pas ce qui peut mal tourner. Où sont les risques de fichiers mal configurés pour l'impression? Les tensions éthiques dans vos choix visuels? Recommencez. Pensez comme quelqu'un qui cherche à vous faire échouer.
 
-[DÃCISION: RETENTEZ]`,
+[DÉCISION: RETENTEZ]`,
   },
 
   {
     id: 'rouge',
     floor: 33,
-    nom: 'BÃATRICE',
-    titre: 'EXPERTE EN IMPACT ÃMOTIF',
+    nom: 'BÉATRICE',
+    titre: 'EXPERTE EN IMPACT ÉMOTIF',
     chapeau: 'CHAPEAU ROUGE',
     cam: 'CAM-03',
-    protocol: 'ÃMOTION & SÃMIOLOGIE',
+    protocol: 'ÉMOTION & SÉMIOLOGIE',
     video: 'video/scene02.mp4',
     photo: 'images/photo-beatrice-rouge.png',
     accentColor: '#2a0a0a',
@@ -1227,57 +1227,57 @@ const PERSONAS = [
         },
         {
           from: 'player',
-          text: `"${title}" â pour le pitch au 100e Ã©tage.`,
+          text: `"${title}" — pour le pitch au 100e étage.`,
         },
         {
           from: 'persona',
-          text: `Ah...\n\nMes tripes me disent quelque chose â mais j'ai besoin d'entendre la vÃ´tre. Quelle Ã©motion prÃ©cise ce projet doit-il dÃ©clencher? Et comment vos choix visuels â couleurs, typographie, images â le communiquent-ils de faÃ§on viscÃ©rale?`,
+          text: `Ah...\n\nMes tripes me disent quelque chose — mais j'ai besoin d'entendre la vôtre. Quelle émotion précise ce projet doit-il déclencher? Et comment vos choix visuels — couleurs, typographie, images — le communiquent-ils de façon viscérale?`,
           isQuestion: true,
         },
       ];
     },
 
     buildSystemPrompt(title, brief) {
-      return `Chapeau Rouge (BÃ©atrice) â impact Ã©motionnel et sÃ©miologie. Projet: "${title}" / "${brief}". Cherche : Ã©motion prÃ©cise, cohÃ©rence couleurs/typo/images, rÃ©sonance viscÃ©rale. 3-4 phrases en franÃ§ais canadien, EN PERSONNAGE. Fin : [DÃCISION: MONTEZ] si intention Ã©motionnelle claire, sinon [DÃCISION: RETENTEZ].`;
+      return `Chapeau Rouge (Béatrice) — impact émotionnel et sémiologie. Projet: "${title}" / "${brief}". Cherche : émotion précise, cohérence couleurs/typo/images, résonance viscérale. 3-4 phrases en français canadien, EN PERSONNAGE. Fin : [DÉCISION: MONTEZ] si intention émotionnelle claire, sinon [DÉCISION: RETENTEZ].`;
     },
-    mockPass: `VoilÃ  quelque chose que je RESSENS vraiment. Vous ne me parlez pas de technique â vous me parlez d'une vibration humaine. Vos choix ont du sens au niveau viscÃ©ral. Gardez cette Ã©nergie pour le pitch final.
+    mockPass: `Voilà quelque chose que je RESSENS vraiment. Vous ne me parlez pas de technique — vous me parlez d'une vibration humaine. Vos choix ont du sens au niveau viscéral. Gardez cette énergie pour le pitch final.
 
-[DÃCISION: MONTEZ]`,
-    mockRetry: `Non, non, non. Vous me parlez de thÃ©orie lÃ  oÃ¹ je cherche l'Ã©motion brute. Ce n'est pas votre tÃªte que j'Ã©value â c'est votre cÅur. Dites-moi ce que ce projet FAIT ressentir Ã  quelqu'un qui le voit pour la premiÃ¨re fois.
+[DÉCISION: MONTEZ]`,
+    mockRetry: `Non, non, non. Vous me parlez de théorie là où je cherche l'émotion brute. Ce n'est pas votre tête que j'évalue — c'est votre cœur. Dites-moi ce que ce projet FAIT ressentir à quelqu'un qui le voit pour la première fois.
 
-[DÃCISION: RETENTEZ]`,
+[DÉCISION: RETENTEZ]`,
   },
-  // Florence / Jaune (Ã©tage 50)
-  { id:'jaune', floor:50, nom:'FLORENCE', titre:'STRATÃGE OPTIMISTE', chapeau:'CHAPEAU JAUNE',
-    cam:'CAM-04', protocol:'VALEUR & BÃNÃFICES', video:'video/scene03.mp4', photo:'images/photo-florence-jaune.png', accentColor:'#1a1600',
-    dialogue(t){return[{from:'persona',text:`Votre projet m'intrigue. De quoi s'agit-il?`},{from:'player',text:`"${t}" â pour le pitch au 100e.`},{from:'persona',text:`Bien. Quelles sont les opportunitÃ©s concrÃ¨tes et les bÃ©nÃ©fices mesurables de ce concept pour le client?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Chapeau Jaune (Florence) â valeur et bÃ©nÃ©fices. Projet: "${t}" / "${b}". Cherche : bÃ©nÃ©fices concrets client, valeur ajoutÃ©e, opportunitÃ©s identifiÃ©es. 3-4 phrases franÃ§ais canadien, EN PERSONNAGE. Fin : [DÃCISION: MONTEZ] si valeur claire, sinon [DÃCISION: RETENTEZ].`},
-    mockPass:`Je vois quelqu'un qui comprend que le design n'est pas une fin en soi â c'est un vecteur de valeur. Vous avez nommÃ© des bÃ©nÃ©fices concrets, pas juste des aspirations floues. Ce projet a une raison d'exister. Montez.\n\n[DÃCISION: MONTEZ]`,
-    mockRetry:`Je cherche la valeur â pas seulement la beautÃ©. Qu'est-ce que ce projet apporte concrÃ¨tement? Qui en bÃ©nÃ©ficie et comment? L'optimisme sans direction, ce n'est que de l'espoir. Retournez y rÃ©flÃ©chir sous l'angle du client.\n\n[DÃCISION: RETENTEZ]`},
+  // Florence / Jaune (étage 50)
+  { id:'jaune', floor:50, nom:'FLORENCE', titre:'STRATÈGE OPTIMISTE', chapeau:'CHAPEAU JAUNE',
+    cam:'CAM-04', protocol:'VALEUR & BÉNÉFICES', video:'video/scene03.mp4', photo:'images/photo-florence-jaune.png', accentColor:'#1a1600',
+    dialogue(t){return[{from:'persona',text:`Votre projet m'intrigue. De quoi s'agit-il?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Quelles sont les opportunités concrètes et les bénéfices mesurables de ce concept pour le client?`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Chapeau Jaune (Florence) — valeur et bénéfices. Projet: "${t}" / "${b}". Cherche : bénéfices concrets client, valeur ajoutée, opportunités identifiées. 3-4 phrases français canadien, EN PERSONNAGE. Fin : [DÉCISION: MONTEZ] si valeur claire, sinon [DÉCISION: RETENTEZ].`},
+    mockPass:`Je vois quelqu'un qui comprend que le design n'est pas une fin en soi — c'est un vecteur de valeur. Vous avez nommé des bénéfices concrets, pas juste des aspirations floues. Ce projet a une raison d'exister. Montez.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Je cherche la valeur — pas seulement la beauté. Qu'est-ce que ce projet apporte concrètement? Qui en bénéficie et comment? L'optimisme sans direction, ce n'est que de l'espoir. Retournez y réfléchir sous l'angle du client.\n\n[DÉCISION: RETENTEZ]`},
 
-  // Antoine / Blanc (Ã©tage 67)
-  { id:'blanc', floor:67, nom:'ANTOINE', titre:'EXPERT EN DONNÃES', chapeau:'CHAPEAU BLANC',
-    cam:'CAM-05', protocol:'DONNÃES & FAITS', video:'video/scene04.mp4', photo:'images/photo-antoine-blanc.png', accentColor:'#141414',
-    dialogue(t){return[{from:'persona',text:`Curieux projet. Qu'est-ce que c'est?`},{from:'player',text:`"${t}" â pour le pitch au 100e.`},{from:'persona',text:`Quelles donnÃ©es factuelles, statistiques ou recherches justifient vos choix visuels et crÃ©atifs?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Chapeau Blanc (Antoine) â faits et donnÃ©es. Projet: "${t}" / "${b}". Cherche : faits vÃ©rifiables, donnÃ©es concrÃ¨tes, distinction fait/opinion, rÃ©fÃ©rences objectives. 3-4 phrases franÃ§ais canadien, EN PERSONNAGE. Fin : [DÃCISION: MONTEZ] si faits solides, sinon [DÃCISION: RETENTEZ].`},
-    mockPass:`Les faits sont lÃ . Vous avez appuyÃ© vos choix sur des donnÃ©es observables plutÃ´t que sur de simples prÃ©fÃ©rences. La distinction entre ce que vous savez et ce que vous supposez est claire. C'est suffisant pour continuer.\n\n[DÃCISION: MONTEZ]`,
-    mockRetry:`Je relÃ¨ve plusieurs affirmations non Ã©tayÃ©es. "Le public aime Ã§a" n'est pas une donnÃ©e â c'est une supposition. Quelles Ã©tudes, quels benchmarks, quelles tendances documentÃ©es supportent vos dÃ©cisions visuelles? Recommencez avec des faits.\n\n[DÃCISION: RETENTEZ]`},
+  // Antoine / Blanc (étage 67)
+  { id:'blanc', floor:67, nom:'ANTOINE', titre:'EXPERT EN DONNÉES', chapeau:'CHAPEAU BLANC',
+    cam:'CAM-05', protocol:'DONNÉES & FAITS', video:'video/scene04.mp4', photo:'images/photo-antoine-blanc.png', accentColor:'#141414',
+    dialogue(t){return[{from:'persona',text:`Curieux projet. Qu'est-ce que c'est?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Quelles données factuelles, statistiques ou recherches justifient vos choix visuels et créatifs?`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Chapeau Blanc (Antoine) — faits et données. Projet: "${t}" / "${b}". Cherche : faits vérifiables, données concrètes, distinction fait/opinion, références objectives. 3-4 phrases français canadien, EN PERSONNAGE. Fin : [DÉCISION: MONTEZ] si faits solides, sinon [DÉCISION: RETENTEZ].`},
+    mockPass:`Les faits sont là. Vous avez appuyé vos choix sur des données observables plutôt que sur de simples préférences. La distinction entre ce que vous savez et ce que vous supposez est claire. C'est suffisant pour continuer.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Je relève plusieurs affirmations non étayées. "Le public aime ça" n'est pas une donnée — c'est une supposition. Quelles études, quels benchmarks, quelles tendances documentées supportent vos décisions visuelles? Recommencez avec des faits.\n\n[DÉCISION: RETENTEZ]`},
 
-  // Gabriel / Vert (Ã©tage 83)
-  { id:'vert', floor:83, nom:'GABRIEL', titre:'CATALYSEUR CRÃATIF', chapeau:'CHAPEAU VERT',
-    cam:'CAM-06', protocol:'CRÃATIVITÃ & ALTERNATIVES', video:'video/scene05.mp4', photo:'images/photo-gabriel-vert.png', accentColor:'#0a1200',
-    dialogue(t){return[{from:'persona',text:`HÃ©, beau projet lÃ . C'est quoi?`},{from:'player',text:`"${t}" â pour le pitch au 100e.`},{from:'persona',text:`Cool. Mais quelles alternatives avez-vous explorÃ©es? Qu'est-ce qui aurait pu Ãªtre complÃ¨tement diffÃ©rent?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Chapeau Vert (Gabriel) â crÃ©ativitÃ© et alternatives. Projet: "${t}" / "${b}". Cherche : alternatives explorÃ©es, idÃ©ation visible, choix crÃ©atif dÃ©libÃ©rÃ©, remise en question. 3-4 phrases franÃ§ais canadien, EN PERSONNAGE. Fin : [DÃCISION: MONTEZ] si exploration rÃ©elle, sinon [DÃCISION: RETENTEZ].`},
-    mockPass:`LÃ  on parle! Vous n'avez pas pris le chemin le plus Ã©vident â vous avez explorÃ©, testÃ©, choisi consciemment. C'est Ã§a la crÃ©ativitÃ© : pas l'inspiration magique, mais le processus dÃ©libÃ©rÃ©. Je veux voir cette Ã©nergie au 100e.\n\n[DÃCISION: MONTEZ]`,
-    mockRetry:`Votre premiÃ¨re idÃ©e Ã©tait votre seule idÃ©e. Je le sens. Le Chapeau Vert, c'est pas juste Ãªtre "original" â c'est documenter le chemin. Qu'est-ce que vous avez rejetÃ©? Pourquoi? Retournez explorer avant de monter.\n\n[DÃCISION: RETENTEZ]`},
+  // Gabriel / Vert (étage 83)
+  { id:'vert', floor:83, nom:'GABRIEL', titre:'CATALYSEUR CRÉATIF', chapeau:'CHAPEAU VERT',
+    cam:'CAM-06', protocol:'CRÉATIVITÉ & ALTERNATIVES', video:'video/scene05.mp4', photo:'images/photo-gabriel-vert.png', accentColor:'#0a1200',
+    dialogue(t){return[{from:'persona',text:`Hé, beau projet là. C'est quoi?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Cool. Mais quelles alternatives avez-vous explorées? Qu'est-ce qui aurait pu être complètement différent?`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Chapeau Vert (Gabriel) — créativité et alternatives. Projet: "${t}" / "${b}". Cherche : alternatives explorées, idéation visible, choix créatif délibéré, remise en question. 3-4 phrases français canadien, EN PERSONNAGE. Fin : [DÉCISION: MONTEZ] si exploration réelle, sinon [DÉCISION: RETENTEZ].`},
+    mockPass:`Là on parle! Vous n'avez pas pris le chemin le plus évident — vous avez exploré, testé, choisi consciemment. C'est ça la créativité : pas l'inspiration magique, mais le processus délibéré. Je veux voir cette énergie au 100e.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Votre première idée était votre seule idée. Je le sens. Le Chapeau Vert, c'est pas juste être "original" — c'est documenter le chemin. Qu'est-ce que vous avez rejeté? Pourquoi? Retournez explorer avant de monter.\n\n[DÉCISION: RETENTEZ]`},
 
-  // Martine / Bleu (Ã©tage 97)
+  // Martine / Bleu (étage 97)
   { id:'bleu', floor:97, nom:'MARTINE', titre:'DIRECTRICE DE PROCESSUS', chapeau:'CHAPEAU BLEU',
-    cam:'CAM-07', protocol:'SYNTHÃSE & PROCESSUS', video:'video/scene06.mp4', photo:'images/photo-martine-bleu.png', accentColor:'#00080f',
-    dialogue(t){return[{from:'persona',text:`VoilÃ  un projet intÃ©ressant. RÃ©sumez-le moi.`},{from:'player',text:`"${t}" â pour le pitch au 100e.`},{from:'persona',text:`Bien. Faites-moi une synthÃ¨se structurÃ©e de votre dÃ©marche crÃ©ative, de votre processus de dÃ©cision, et de votre prochaine Ã©tape concrÃ¨te.`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Chapeau Bleu (Martine) â processus et mÃ©ta-cognition. Projet: "${t}" / "${b}". Cherche : synthÃ¨se structurÃ©e, rÃ©flexion sur la dÃ©marche, prochaines Ã©tapes concrÃ¨tes, cohÃ©rence processus/rÃ©sultat. 3-4 phrases franÃ§ais canadien, EN PERSONNAGE. Fin : [DÃCISION: MONTEZ] si dÃ©marche claire, sinon [DÃCISION: RETENTEZ].`},
-    mockPass:`VoilÃ  quelqu'un qui sait oÃ¹ il/elle s'en va. La dÃ©marche est lisible, les dÃ©cisions sont justifiÃ©es, les prochaines Ã©tapes sont concrÃ¨tes. C'est exactement ce type de clartÃ© qui convainc au 100e Ã©tage. Vous Ãªtes prÃªtÂ·e.\n\n[DÃCISION: MONTEZ]`,
-    mockRetry:`Je vois un rÃ©sultat, mais pas une dÃ©marche. Comment Ãªtes-vous arrivÃ©Â·e lÃ ? Quelles dÃ©cisions ont Ã©tÃ© prises, et pourquoi? Le Chapeau Bleu Ã©value votre processus, pas votre intuition. Structurez votre rÃ©ponse et revenez.\n\n[DÃCISION: RETENTEZ]`},
+    cam:'CAM-07', protocol:'SYNTHÈSE & PROCESSUS', video:'video/scene06.mp4', photo:'images/photo-martine-bleu.png', accentColor:'#00080f',
+    dialogue(t){return[{from:'persona',text:`Voilà un projet intéressant. Résumez-le moi.`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Faites-moi une synthèse structurée de votre démarche créative, de votre processus de décision, et de votre prochaine étape concrète.`,isQuestion:true}]},
+    buildSystemPrompt(t,b){return`Chapeau Bleu (Martine) — processus et méta-cognition. Projet: "${t}" / "${b}". Cherche : synthèse structurée, réflexion sur la démarche, prochaines étapes concrètes, cohérence processus/résultat. 3-4 phrases français canadien, EN PERSONNAGE. Fin : [DÉCISION: MONTEZ] si démarche claire, sinon [DÉCISION: RETENTEZ].`},
+    mockPass:`Voilà quelqu'un qui sait où il/elle s'en va. La démarche est lisible, les décisions sont justifiées, les prochaines étapes sont concrètes. C'est exactement ce type de clarté qui convainc au 100e étage. Vous êtes prêt·e.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Je vois un résultat, mais pas une démarche. Comment êtes-vous arrivé·e là? Quelles décisions ont été prises, et pourquoi? Le Chapeau Bleu évalue votre processus, pas votre intuition. Structurez votre réponse et revenez.\n\n[DÉCISION: RETENTEZ]`},
 ];
 
 // ============================================================
@@ -1337,27 +1337,27 @@ function startClock() {
 function runBoot() {
   const el = document.getElementById('boot-output');
   const lines = [
-    { t: 'AGENCE STUDIO X â SYSTÃME DE FORMATION v2.6', ms: 0,    c: 'ok'  },
-    { t: 'ââââââââââââââââââââââââââââââââââââââââââââ', ms: 180  },
+    { t: 'AGENCE STUDIO X — SYSTÈME DE FORMATION v2.6', ms: 0,    c: 'ok'  },
+    { t: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', ms: 180  },
     { t: '',                                                         ms: 350  },
-    { t: 'Initialisation du systÃ¨me...',                            ms: 500  },
-    { t: '  [OK] CamÃ©ras de sÃ©curitÃ© ............. EN LIGNE',       ms: 720,  c: 'ok' },
-    { t: '  [OK] SystÃ¨me ascenseur (100 Ã©tages) .. OPÃRATIONNEL',   ms: 920,  c: 'ok' },
-    { t: '  [OK] Module vidÃ©o CCTV ............... ACTIF',          ms: 1120, c: 'ok' },
-    { t: '  [OK] Interface IA ..................... CONNECTÃE',       ms: 1320, c: 'ok' },
-    { t: '  [OK] Protocole 6-CHAPEAUX ............ CHARGÃ',         ms: 1520, c: 'ok' },
+    { t: 'Initialisation du système...',                            ms: 500  },
+    { t: '  [OK] Caméras de sécurité ............. EN LIGNE',       ms: 720,  c: 'ok' },
+    { t: '  [OK] Système ascenseur (100 étages) .. OPÉRATIONNEL',   ms: 920,  c: 'ok' },
+    { t: '  [OK] Module vidéo CCTV ............... ACTIF',          ms: 1120, c: 'ok' },
+    { t: '  [OK] Interface IA ..................... CONNECTÉE',       ms: 1320, c: 'ok' },
+    { t: '  [OK] Protocole 6-CHAPEAUX ............ CHARGÉ',         ms: 1520, c: 'ok' },
     { t: '',                                                         ms: 1700 },
-    { t: 'Experts â Ã©difice 100 Ã©tages:',                           ms: 1850 },
-    { t: '  â CLAUDE     CHAPEAU NOIR   (ÃT.017)  PRÃT  â¶',       ms: 2050, c: 'ok' },
-    { t: '  â BÃATRICE   CHAPEAU ROUGE  (ÃT.033)  PRÃT  â¶',       ms: 2200, c: 'ok' },
-    { t: '  Â· FLORENCE   CHAPEAU JAUNE  (ÃT.050)  EN DÃVELOPPEMENT', ms: 2350, c: 'dim' },
-    { t: '  Â· ANTOINE    CHAPEAU BLANC  (ÃT.067)  EN DÃVELOPPEMENT', ms: 2480, c: 'dim' },
-    { t: '  Â· GABRIEL    CHAPEAU VERT   (ÃT.083)  EN DÃVELOPPEMENT', ms: 2610, c: 'dim' },
-    { t: '  Â· MARTINE    CHAPEAU BLEU   (ÃT.097)  EN DÃVELOPPEMENT', ms: 2740, c: 'dim' },
-    { t: '  Â· SALLE BOARD              (ÃT.100)   VERROUILLÃE',     ms: 2870, c: 'dim' },
+    { t: 'Experts — édifice 100 étages:',                           ms: 1850 },
+    { t: '  ◈ CLAUDE     CHAPEAU NOIR   (ÉT.017)  PRÊT  ▶',       ms: 2050, c: 'ok' },
+    { t: '  ◈ BÉATRICE   CHAPEAU ROUGE  (ÉT.033)  PRÊT  ▶',       ms: 2200, c: 'ok' },
+    { t: '  · FLORENCE   CHAPEAU JAUNE  (ÉT.050)  EN DÉVELOPPEMENT', ms: 2350, c: 'dim' },
+    { t: '  · ANTOINE    CHAPEAU BLANC  (ÉT.067)  EN DÉVELOPPEMENT', ms: 2480, c: 'dim' },
+    { t: '  · GABRIEL    CHAPEAU VERT   (ÉT.083)  EN DÉVELOPPEMENT', ms: 2610, c: 'dim' },
+    { t: '  · MARTINE    CHAPEAU BLEU   (ÉT.097)  EN DÉVELOPPEMENT', ms: 2740, c: 'dim' },
+    { t: '  · SALLE BOARD              (ÉT.100)   VERROUILLÉE',     ms: 2870, c: 'dim' },
     { t: '',                                                         ms: 3000 },
-    { t: 'PROTOTYPE MVP â ÃTAGES NOIR & ROUGE ACTIFS',              ms: 3100, c: 'ok' },
-    { t: 'âº ACCÃS AUTORISÃ',                                        ms: 3280, c: 'ok' },
+    { t: 'PROTOTYPE MVP — ÉTAGES NOIR & ROUGE ACTIFS',              ms: 3100, c: 'ok' },
+    { t: '► ACCÈS AUTORISÉ',                                        ms: 3280, c: 'ok' },
   ];
   lines.forEach(({ t, ms, c }) => {
     setTimeout(() => {
@@ -1370,7 +1370,7 @@ function runBoot() {
   });
   setTimeout(() => {
     showScreen('screen-title');
-    // 1s aprÃ¨s l'apparition du titre â le C monte comme une cabine
+    // 1s après l'apparition du titre → le C monte comme une cabine
     setTimeout(() => {
       const c = document.querySelector('.title-c-letter');
       if (c) c.classList.add('animating');
@@ -1386,8 +1386,8 @@ function animateElevator(from, to, onDone) {
   const numEl  = document.getElementById('elev-num');
   const destEl = document.getElementById('elev-dest');
   const statEl = document.getElementById('elev-status');
-  destEl.textContent = `EN ROUTE VERS L'ÃTAGE ${pad3(to)}`;
-  statEl.textContent = 'MONTÃE EN COURS...';
+  destEl.textContent = `EN ROUTE VERS L'ÉTAGE ${pad3(to)}`;
+  statEl.textContent = 'MONTÉE EN COURS...';
 
   const steps    = to - from;
   const interval = Math.max(35, 2200 / steps);
@@ -1399,14 +1399,14 @@ function animateElevator(from, to, onDone) {
     updateHUD(cur, 'ASCENSEUR EN MOUVEMENT');
     if (cur >= to) {
       clearInterval(timer);
-      statEl.textContent = 'â¼  ARRIVÃE â PORTES EN COURS D\'OUVERTURE  â¼';
+      statEl.textContent = '▼  ARRIVÉE — PORTES EN COURS D\'OUVERTURE  ▼';
       setTimeout(onDone, 900);
     }
   }, interval);
 }
 
 // ============================================================
-// AFFICHAGE PERSONA + VIDÃO + DIALOGUE
+// AFFICHAGE PERSONA + VIDÉO + DIALOGUE
 // ============================================================
 function appendChatMsg(from, text) {
   const log = document.getElementById('chat-log');
@@ -1415,7 +1415,7 @@ function appendChatMsg(from, text) {
 
   const label = document.createElement('div');
   label.className = `msg-from ${from}-from`;
-  label.textContent = from === 'persona' ? 'â¸ EXPERT' : 'â¸ VOUS';
+  label.textContent = from === 'persona' ? '▸ EXPERT' : '▸ VOUS';
 
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
@@ -1431,7 +1431,7 @@ async function typewriter(el, text, speed = 18) {
   el.textContent = '';
   const scrollContainer = el.closest('.persona-dialog');
   let i = 0;
-  // Regrouper par mots entiers pour rÃ©duire les reflows â scroll toutes les 6 lettres max
+  // Regrouper par mots entiers pour réduire les reflows — scroll toutes les 6 lettres max
   while (i < text.length) {
     el.textContent = text.substring(0, i + 1);
     i++;
@@ -1478,12 +1478,12 @@ function showPersona(idx) {
   // HUD
   document.getElementById('hud-cam').textContent   = `${p.cam} | ASCENSEUR-STUDIO-A`;
   document.getElementById('hud-proto').textContent  = p.protocol;
-  updateHUD(p.floor, `RENCONTRE â ${p.chapeau}`);
+  updateHUD(p.floor, `RENCONTRE — ${p.chapeau}`);
 
   // Infos persona
-  document.getElementById('det-label').textContent       = `ID: ${p.nom} Â· ${p.chapeau}`;
+  document.getElementById('det-label').textContent       = `ID: ${p.nom} · ${p.chapeau}`;
   document.getElementById('p-cam').textContent            = p.cam;
-  document.getElementById('p-floor-badge').textContent   = `ÃT.${pad3(p.floor)}`;
+  document.getElementById('p-floor-badge').textContent   = `ÉT.${pad3(p.floor)}`;
   document.getElementById('p-nom').textContent            = p.nom;
   document.getElementById('p-titre').textContent          = p.titre;
   document.getElementById('p-chapeau').textContent        = p.chapeau;
@@ -1498,7 +1498,7 @@ function showPersona(idx) {
   freezeBadge.classList.remove('visible');
   document.getElementById('persona-cam-view').classList.remove('freeze-active');
 
-  // VidÃ©o
+  // Vidéo
   const video   = document.getElementById('persona-video');
   const camView = document.getElementById('persona-cam-view');
   const pauseAt = PAUSE_TIMES[p.id] || 5.0;
@@ -1529,7 +1529,7 @@ function showPersona(idx) {
   }
 
   // requestAnimationFrame au lieu de ontimeupdate :
-  // synchronisÃ© au rendu (60 fps max), jamais plus frÃ©quent â 4Ã moins de charge CPU
+  // synchronisé au rendu (60 fps max), jamais plus fréquent → 4× moins de charge CPU
   function watchPause() {
     if (video.currentTime >= pauseAt) {
       doFreeze();
@@ -1542,13 +1542,13 @@ function showPersona(idx) {
 
   video.oncanplay = () => {
     video.play().then(() => {
-      // Suspendre les animations SVG pendant la lecture pour libÃ©rer le thread
+      // Suspendre les animations SVG pendant la lecture pour libérer le thread
       camView.classList.add('video-playing');
       video._rafId = requestAnimationFrame(watchPause);
     }).catch(() => doFreeze());
   };
 
-  // ScÃ¨ne 01 (idx=0) : entrÃ©e dans l'ascenseur â pas de slide-up
+  // Scène 01 (idx=0) : entrée dans l'ascenseur → pas de slide-up
   const ps = document.getElementById('screen-persona');
   if (idx === 0) ps.classList.add('skip-slide');
   showScreen('screen-persona');
@@ -1563,29 +1563,29 @@ async function callGemini(persona, studentResponse) {
   const apiUrl = CONFIG.VERCEL_API_URL.trim();
   const key    = CONFIG.GEMINI_API_KEY.trim();
 
-  console.log('[ASCENSEUR] callGemini â apiUrl:', apiUrl, '| key:', key ? 'â prÃ©sente' : 'â absente');
+  console.log('[ASCENSEUR] callGemini — apiUrl:', apiUrl, '| key:', key ? '✓ présente' : '✗ absente');
 
-  // Mode dÃ©mo : ni Vercel ni clÃ© directe configurÃ©s
+  // Mode démo : ni Vercel ni clé directe configurés
   if (!apiUrl && !key) {
-    console.log('[ASCENSEUR] â MODE SIMULATION');
+    console.log('[ASCENSEUR] → MODE SIMULATION');
     await delay(1800 + Math.random() * 700);
     return studentResponse.trim().length > 90 ? persona.mockPass : persona.mockRetry;
   }
 
-  // Utilise le proxy Vercel si configurÃ©, sinon appel direct (test local)
+  // Utilise le proxy Vercel si configuré, sinon appel direct (test local)
   const url = apiUrl
     ? apiUrl
     : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
 
-  console.log('[ASCENSEUR] â APPEL API vers:', url);
+  console.log('[ASCENSEUR] → APPEL API vers:', url);
 
-  // Prompt compact : system + question fusionnÃ©s pour minimiser les tokens
+  // Prompt compact : system + question fusionnés pour minimiser les tokens
   const prompt = persona.buildSystemPrompt(G.title, G.brief)
-    + `\n\nRÃ©ponse de l'Ã©tudiantÂ·e :\n"${studentResponse}"`;
+    + `\n\nRéponse de l'étudiant·e :\n"${studentResponse}"`;
 
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.75, maxOutputTokens: 180 },
+    generationConfig: { temperature: 0.75, maxOutputTokens: 300 },
   };
 
   try {
@@ -1593,7 +1593,7 @@ async function callGemini(persona, studentResponse) {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     });
     if (res.status === 429) {
-      console.warn('[ASCENSEUR] 429 â quota atteint, mode simulation');
+      console.warn('[ASCENSEUR] 429 — quota atteint, mode simulation');
       return studentResponse.trim().length > 90 ? persona.mockPass : persona.mockRetry;
     }
     if (!res.ok) throw new Error(await res.text());
@@ -1606,12 +1606,12 @@ async function callGemini(persona, studentResponse) {
 }
 
 // ============================================================
-// ÃVALUATION
+// ÉVALUATION
 // ============================================================
 async function showEvaluation(idx, studentResponse) {
   const p = PERSONAS[idx];
   showScreen('screen-evaluation');
-  document.getElementById('eval-header-name').textContent = `${p.nom} â ${p.chapeau}`;
+  document.getElementById('eval-header-name').textContent = `${p.nom} — ${p.chapeau}`;
   document.getElementById('eval-loading').style.display  = 'flex';
   document.getElementById('eval-response').style.display = 'none';
 
@@ -1619,8 +1619,8 @@ async function showEvaluation(idx, studentResponse) {
   try { raw = await callGemini(p, studentResponse); }
   catch(e) { console.error(e); raw = p.mockRetry; }
 
-  const isPass    = raw.includes('[DÃCISION: MONTEZ]');
-  const cleanText = raw.replace(/\[DÃCISION:.*?\]/g, '').trim();
+  const isPass    = raw.includes('[DÉCISION: MONTEZ]');
+  const cleanText = raw.replace(/\[DÉCISION:.*?\]/g, '').trim();
 
   G.results.push({ persona: p, response: studentResponse, evaluation: cleanText, decision: isPass ? 'MONTEZ' : 'RETENTEZ' });
 
@@ -1628,7 +1628,7 @@ async function showEvaluation(idx, studentResponse) {
   const evalResp = document.getElementById('eval-response');
   evalResp.style.display = 'flex';
 
-  document.getElementById('eval-verdict').textContent = `ÃVALUATION â ${p.nom} / ${p.chapeau}`;
+  document.getElementById('eval-verdict').textContent = `ÉVALUATION — ${p.nom} / ${p.chapeau}`;
   document.getElementById('eval-text').textContent    = cleanText;
 
   const decEl = document.getElementById('eval-decision');
@@ -1636,7 +1636,7 @@ async function showEvaluation(idx, studentResponse) {
   actEl.innerHTML = '';
 
   if (isPass) {
-    decEl.textContent = 'â²  ACCÃS ACCORDÃ â VOUS POUVEZ MONTER';
+    decEl.textContent = '▲  ACCÈS ACCORDÉ — VOUS POUVEZ MONTER';
     decEl.className   = 'eval-decision pass';
 
     const btnNext = document.createElement('button');
@@ -1645,34 +1645,34 @@ async function showEvaluation(idx, studentResponse) {
 
     if (hasNext) {
       const nextP = PERSONAS[idx + 1];
-      btnNext.textContent = `[ CONTINUER â ÃTAGE ${pad3(nextP.floor)} ]`;
+      btnNext.textContent = `[ CONTINUER → ÉTAGE ${pad3(nextP.floor)} ]`;
       btnNext.onclick = () => {
         G.personaIndex++;
         G.floor = p.floor;
         animateElevator(p.floor, nextP.floor, () => showPersona(G.personaIndex));
       };
     } else {
-      btnNext.textContent = '[ MONTER AU 100e â PITCH FINAL ]';
+      btnNext.textContent = '[ MONTER AU 100e — PITCH FINAL ]';
       btnNext.onclick = () => animateElevator(p.floor, 100, showBoardroom);
     }
     actEl.appendChild(btnNext);
 
   } else {
-    decEl.textContent = 'â¼  ACCÃS REFUSÃ â RÃPONDEZ Ã NOUVEAU';
+    decEl.textContent = '▼  ACCÈS REFUSÉ — RÉPONDEZ À NOUVEAU';
     decEl.className   = 'eval-decision retry';
     G.results.pop();
 
     const btnRetry = document.createElement('button');
-    btnRetry.textContent = '[ RÃESSAYER ]';
+    btnRetry.textContent = '[ RÉESSAYER ]';
     btnRetry.className   = 'btn primary';
     btnRetry.onclick     = () => showPersona(idx);
     actEl.appendChild(btnRetry);
 
     const btnSkip = document.createElement('button');
-    btnSkip.textContent = '[ PASSER Â· MODE DÃMO ]';
+    btnSkip.textContent = '[ PASSER · MODE DÉMO ]';
     btnSkip.className   = 'btn ghost';
     btnSkip.onclick = () => {
-      G.results.push({ persona: p, response: studentResponse, evaluation: cleanText, decision: 'DÃMO' });
+      G.results.push({ persona: p, response: studentResponse, evaluation: cleanText, decision: 'DÉMO' });
       const hasNext = idx + 1 < PERSONAS.length;
       if (hasNext) {
         const nextP = PERSONAS[idx + 1];
@@ -1688,13 +1688,13 @@ async function showEvaluation(idx, studentResponse) {
 // RAPPORT FINAL
 // ============================================================
 // ============================================================
-// BOARDROOM â ÃTAGE 100
+// BOARDROOM — ÉTAGE 100
 // ============================================================
 const BOARDROOM_FREEZE_AT = 9.5;
 
 function showBoardroom() {
   showScreen('screen-boardroom');
-  updateHUD(100, 'PITCH FINAL â SALLE DU CONSEIL');
+  updateHUD(100, 'PITCH FINAL — SALLE DU CONSEIL');
   document.getElementById('boardroom-entry-wrap').style.display = 'block';
   document.getElementById('boardroom-room-wrap').style.display = 'none';
 
@@ -1714,7 +1714,7 @@ function showBoardroom() {
     document.getElementById('board-proj-title').textContent = G.title;
     document.getElementById('boardroom-pitch').value = '';
     document.getElementById('board-char-count').textContent = '0 / min. 80 car.';
-    // Re-dÃ©clencher l'animation zoom
+    // Re-déclencher l'animation zoom
     const img = room.querySelector('.board-bg-img');
     img.style.animation = 'none'; img.offsetHeight; img.style.animation = '';
   }
@@ -1735,14 +1735,14 @@ document.getElementById('boardroom-pitch').addEventListener('input', function() 
 
 document.getElementById('btn-pitch-submit').addEventListener('click', async () => {
   const pitch = document.getElementById('boardroom-pitch').value.trim();
-  if (pitch.length < 80) { toast('DÃ©veloppez davantage votre pitch (min. 80 caractÃ¨res).'); return; }
+  if (pitch.length < 80) { toast('Développez davantage votre pitch (min. 80 caractères).'); return; }
   G.finalPitch = pitch;
   await showVerdict(pitch);
 });
 
 async function showVerdict(pitch) {
   showScreen('screen-verdict');
-  updateHUD(100, 'DÃLIBÃRATION DU PANEL');
+  updateHUD(100, 'DÉLIBÉRATION DU PANEL');
 
   const video   = document.getElementById('verdict-video');
   const overlay = document.getElementById('verdict-overlay');
@@ -1751,7 +1751,7 @@ async function showVerdict(pitch) {
   const decEl = document.getElementById('verdict-decision-el');
   decEl.classList.remove('visible','accord','refus');
 
-  // VidÃ©o de rÃ©action en boucle pendant les scores
+  // Vidéo de réaction en boucle pendant les scores
   video.src = 'video/Scene8x.mp4';
   video.loop = true; video.muted = false;
   video.load(); video.play().catch(() => {});
@@ -1768,11 +1768,11 @@ async function showVerdict(pitch) {
   document.getElementById('verdict-avg-row').classList.add('visible');
   await delay(700);
 
-  decEl.textContent = won ? 'â  ACCORD â PROJET APPROUVÃ' : 'â  REFUS â CONCEPT Ã REVOIR';
+  decEl.textContent = won ? '✓  ACCORD — PROJET APPROUVÉ' : '✗  REFUS — CONCEPT À REVOIR';
   decEl.classList.add('visible', won ? 'accord' : 'refus');
   await delay(2200);
 
-  // VidÃ©o de conclusion
+  // Vidéo de conclusion
   overlay.style.display = 'none';
   video.loop = false;
   video.src = won ? 'video/scene9x.mp4' : 'video/scene10x.mp4';
@@ -1780,7 +1780,7 @@ async function showVerdict(pitch) {
   let done = false;
   function finish() { if (done) return; done = true; showSummary(); }
   video.onended = finish;
-  // Victoire : stoppe Ã  3.5s puis passe au rapport
+  // Victoire : stoppe à 3.5s puis passe au rapport
   if (won) setTimeout(finish, 3500);
   else     setTimeout(finish, 20000);
 }
@@ -1834,7 +1834,7 @@ async function callGeminiDragonsDen(pitch) {
     ? apiUrl
     : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
 
-  const prompt = `Tu es un panel d'investisseurs Dragon's Den spÃ©cialisÃ©s en design graphique. Un Ã©tudiant prÃ©sente son concept rÃ©visÃ© aprÃ¨s les rÃ©troactions des 6 chapeaux de De Bono.\n\nTitre: "${G.title}"\nConcept original: "${G.brief}"\nRÃ©troactions reÃ§ues:\n${feedbackCtx}\nPitch final: "${pitch}"\n\nÃvalue si l'Ã©tudiant a intÃ©grÃ© les rÃ©troactions. Retourne UNIQUEMENT un JSON valide (sans markdown):\n{"noir":<0-100>,"rouge":<0-100>,"jaune":<0-100>,"blanc":<0-100>,"vert":<0-100>,"bleu":<0-100>}`;
+  const prompt = `Tu es un panel d'investisseurs Dragon's Den spécialisés en design graphique. Un étudiant présente son concept révisé après les rétroactions des 6 chapeaux de De Bono.\n\nTitre: "${G.title}"\nConcept original: "${G.brief}"\nRétroactions reçues:\n${feedbackCtx}\nPitch final: "${pitch}"\n\nÉvalue si l'étudiant a intégré les rétroactions. Retourne UNIQUEMENT un JSON valide (sans markdown):\n{"noir":<0-100>,"rouge":<0-100>,"jaune":<0-100>,"blanc":<0-100>,"vert":<0-100>,"bleu":<0-100>}`;
   try {
     const res  = await fetch(url,
       { method:'POST', headers:{'Content-Type':'application/json'},
@@ -1853,15 +1853,15 @@ function showSummary() {
   const now = new Date();
   const fmt = n => String(n).padStart(2, '0');
   document.getElementById('summary-meta').textContent =
-    `SESSION: ${G.sessionId}  Â·  ${fmt(now.getDate())}/${fmt(now.getMonth()+1)}/${now.getFullYear()}  Â·  ÃTAGES: ${G.results.length}/6`;
+    `SESSION: ${G.sessionId}  ·  ${fmt(now.getDate())}/${fmt(now.getMonth()+1)}/${now.getFullYear()}  ·  ÉTAGES: ${G.results.length}/6`;
 
   const grid = document.getElementById('summary-results');
   grid.innerHTML = '';
 
-  // Remplir les rÃ©sultats rÃ©els d'abord
+  // Remplir les résultats réels d'abord
   const filledIds = new Set(G.results.map(r => r.persona.id));
 
-  // On affiche toujours les 6 cartes (futures = grisÃ©es si pas encore jouÃ©es)
+  // On affiche toujours les 6 cartes (futures = grisées si pas encore jouées)
   const allPersonas = [
     ...G.results.map(r => ({ result: r, persona: r.persona })),
     ...PERSONAS.filter(p => !filledIds.has(p.id)).map(p => ({ result: null, persona: p })),
@@ -1871,31 +1871,31 @@ function showSummary() {
     const card = document.createElement('div');
     card.className = 'rcard' + (r ? '' : ' rcard-pending');
 
-    // DÃ©cision
-    let badgeClass = 'demo', badgeLabel = 'â EN ATTENTE';
+    // Décision
+    let badgeClass = 'demo', badgeLabel = '— EN ATTENTE';
     let floorNum = pad3(p.floor);
-    let floorStrip = `L'ÃTAGE ${pad3(p.floor)}`;
+    let floorStrip = `L'ÉTAGE ${pad3(p.floor)}`;
 
     if (r) {
       if (r.decision === 'MONTEZ') {
-        badgeClass = 'pass'; badgeLabel = 'â VALIDÃ';
+        badgeClass = 'pass'; badgeLabel = '✓ VALIDÉ';
         floorNum   = pad3(p.floor);
-        floorStrip = `L'ÃTAGE ${pad3(p.floor)}`;
-      } else if (r.decision === 'DÃMO') {
-        badgeClass = 'demo'; badgeLabel = 'â DÃMO';
+        floorStrip = `L'ÉTAGE ${pad3(p.floor)}`;
+      } else if (r.decision === 'DÉMO') {
+        badgeClass = 'demo'; badgeLabel = '→ DÉMO';
         floorNum   = pad3(p.floor);
-        floorStrip = `L'ÃTAGE ${pad3(p.floor)}`;
+        floorStrip = `L'ÉTAGE ${pad3(p.floor)}`;
       } else {
-        badgeClass = 'retry'; badgeLabel = 'â Ã RÃVISER';
+        badgeClass = 'retry'; badgeLabel = '✗ À RÉVISER';
         floorNum   = pad3(p.floor);
-        floorStrip = `EN ROUTE VERS L'ÃTAGE ${pad3(p.floor)}`;
+        floorStrip = `EN ROUTE VERS L'ÉTAGE ${pad3(p.floor)}`;
       }
     }
 
-    const shortResp = r ? (r.response.length > 180 ? r.response.substring(0, 180) + 'â¦' : r.response) : '';
+    const shortResp = r ? (r.response.length > 180 ? r.response.substring(0, 180) + '…' : r.response) : '';
     const evalTxt   = r ? r.evaluation : '';
 
-    // Photo : img si le fichier existe, sinon placeholder colorÃ©
+    // Photo : img si le fichier existe, sinon placeholder coloré
     const photoHTML = p.photo
       ? `<div class="rcard-photo-wrap">
            <img class="rcard-photo" src="${p.photo}"
@@ -1912,7 +1912,7 @@ function showSummary() {
       </div>
       <div class="rcard-info">
         <div class="rcard-meta">
-          <div class="rcard-chapeau">${p.chapeau} â ${p.nom} Â· ÃT.${pad3(p.floor)}</div>
+          <div class="rcard-chapeau">${p.chapeau} — ${p.nom} · ÉT.${pad3(p.floor)}</div>
           <div class="rcard-badge ${badgeClass}">${badgeLabel}</div>
         </div>
         ${shortResp ? `<div class="rcard-response">"${shortResp}"</div>` : ''}
@@ -1924,47 +1924,47 @@ function showSummary() {
 }
 
 // ============================================================
-// ÃVÃNEMENTS
+// ÉVÉNEMENTS
 // ============================================================
 document.getElementById('btn-start').addEventListener('click', () => {
   G.sessionId = genSessionId();
   document.getElementById('brief-session-id').textContent = G.sessionId;
-  updateHUD(1, 'HALL D\'ACCUEIL â RÃCEPTION');
+  updateHUD(1, 'HALL D\'ACCUEIL — RÉCEPTION');
   showScreen('screen-brief');
 });
 
-// ââ [DEV] Raccourci rapport final ââââââââââââââââââââââââââââââââââââââââââ
+// ── [DEV] Raccourci rapport final ──────────────────────────────────────────
 document.getElementById('dev-rapport-link').addEventListener('click', () => {
-  // [DEV] Simule la fin de la scÃ¨ne de Martine (dernier persona, idx=5)
+  // [DEV] Simule la fin de la scène de Martine (dernier persona, idx=5)
   G.sessionId    = genSessionId();
-  G.title        = '[DÃMO] Campagne Festival de MÃ©gantic 2025';
-  G.brief        = 'Concept typographique en noir et blanc avec grain argentique, Ã©voquant les affiches du cinÃ©ma muet. Palette monochrome, typo serif condensÃ©e, grain de film 35mm simulÃ© en CSS.';
+  G.title        = '[DÉMO] Campagne Festival de Mégantic 2025';
+  G.brief        = 'Concept typographique en noir et blanc avec grain argentique, évoquant les affiches du cinéma muet. Palette monochrome, typo serif condensée, grain de film 35mm simulé en CSS.';
   G.floor        = 97;
   G.personaIndex = 5;
   G.results      = PERSONAS.map(p => ({
     persona:    p,
-    response:   'RÃ©ponse de dÃ©monstration â mode dÃ©veloppement.',
-    evaluation: 'Ãvaluation IA simulÃ©e â synthÃ¨se cohÃ©rente avec les rÃ©troactions reÃ§ues.',
+    response:   'Réponse de démonstration — mode développement.',
+    evaluation: 'Évaluation IA simulée — synthèse cohérente avec les rétroactions reçues.',
     decision:   'MONTEZ',
   }));
 
-  // Afficher l'Ã©cran d'Ã©valuation de Martine avec le bouton PITCH FINAL
+  // Afficher l'écran d'évaluation de Martine avec le bouton PITCH FINAL
   const p = PERSONAS[5];
   showScreen('screen-evaluation');
-  document.getElementById('eval-header-name').textContent = `${p.nom} â ${p.chapeau}`;
+  document.getElementById('eval-header-name').textContent = `${p.nom} — ${p.chapeau}`;
   document.getElementById('eval-loading').style.display   = 'none';
   const evalResp = document.getElementById('eval-response');
   evalResp.style.display = 'flex';
-  document.getElementById('eval-verdict').textContent = `ÃVALUATION â ${p.nom} / ${p.chapeau}`;
-  document.getElementById('eval-text').textContent    = 'SynthÃ¨se exemplaire. Vous avez su orchestrer les diffÃ©rentes perspectives avec rigueur. La dÃ©marche est claire, le processus bien dÃ©fini.';
+  document.getElementById('eval-verdict').textContent = `ÉVALUATION — ${p.nom} / ${p.chapeau}`;
+  document.getElementById('eval-text').textContent    = 'Synthèse exemplaire. Vous avez su orchestrer les différentes perspectives avec rigueur. La démarche est claire, le processus bien défini.';
   const decEl = document.getElementById('eval-decision');
-  decEl.textContent = 'â²  ACCÃS ACCORDÃ â VOUS POUVEZ MONTER';
+  decEl.textContent = '▲  ACCÈS ACCORDÉ — VOUS POUVEZ MONTER';
   decEl.className   = 'eval-decision pass';
   const actEl = document.getElementById('eval-actions');
   actEl.innerHTML   = '';
   const btnNext = document.createElement('button');
   btnNext.className   = 'btn primary';
-  btnNext.textContent = '[ MONTER AU 100e â PITCH FINAL ]';
+  btnNext.textContent = '[ MONTER AU 100e — PITCH FINAL ]';
   btnNext.onclick     = () => animateElevator(p.floor, 100, showBoardroom);
   actEl.appendChild(btnNext);
 });
@@ -1973,7 +1973,7 @@ document.getElementById('btn-submit-brief').addEventListener('click', () => {
   const title = document.getElementById('input-title').value.trim();
   const brief = document.getElementById('input-brief').value.trim();
   if (!title) { toast('Nommez votre projet avant de continuer.'); return; }
-  if (brief.length < 30) { toast('DÃ©crivez davantage votre concept (min. 30 caractÃ¨res).'); return; }
+  if (brief.length < 30) { toast('Décrivez davantage votre concept (min. 30 caractères).'); return; }
   G.title = title; G.brief = brief; G.floor = 1;
   G.personaIndex = 0; G.results = [];
   animateElevator(1, PERSONAS[0].floor, () => showPersona(0));
@@ -1985,7 +1985,7 @@ document.getElementById('response-input').addEventListener('input', function () 
 
 document.getElementById('btn-submit-response').addEventListener('click', () => {
   const val = document.getElementById('response-input').value.trim();
-  if (val.length < 20) { toast('RÃ©ponse trop courte â dÃ©veloppez votre argumentation.'); return; }
+  if (val.length < 20) { toast('Réponse trop courte — développez votre argumentation.'); return; }
   showEvaluation(G.personaIndex, val);
 });
 
