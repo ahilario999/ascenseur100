@@ -1271,29 +1271,29 @@ Concept : ${brief}
   { id:'jaune', floor:50, nom:'FLORENCE', titre:'STRATÈGE OPTIMISTE', chapeau:'CHAPEAU JAUNE',
     cam:'CAM-04', protocol:'VALEUR & BÉNÉFICES', video:'video/scene03.mp4', photo:'images/photo-florence-jaune.png', accentColor:'#1a1600',
     dialogue(t){return[{from:'persona',text:`Votre projet m'intrigue. De quoi s'agit-il?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Quelles sont les opportunités concrètes et les bénéfices mesurables de ce concept pour le client?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Florence, experte en pensée optimiste (Chapeau Jaune). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu incarnes Florence, stratège optimiste qui porte le Chapeau Jaune de la méthode De Bono. Tu cherches la valeur, les bénéfices, les opportunités. Tu es enthousiaste mais exigeante : l'optimisme sans fondement ne t'intéresse pas.\n\nBrief du projet :\nTitre : ${t}\nConcept : ${b}\n\nÉvalue la réponse de l'étudiant·e. Tu cherches : les bénéfices concrets pour le client, la valeur ajoutée du concept, les opportunités identifiées. Réponds EN PERSONNAGE (tu ES Florence, Chapeau Jaune) en 3-4 phrases, en français canadien.\n\nÀ la toute fin, sur une ligne seule :\n[DÉCISION: MONTEZ] si l'étudiant·e articule clairement la valeur et les bénéfices réels\n[DÉCISION: RETENTEZ] si la réponse reste vague sur les avantages concrets`},
+    mockPass:`Je vois quelqu'un qui comprend que le design n'est pas une fin en soi — c'est un vecteur de valeur. Vous avez nommé des bénéfices concrets, pas juste des aspirations floues.\n\n[DÉCISION: MONTEZ]`, mockRetry:`Je cherche la valeur — pas seulement la beauté. Qu'est-ce que ce projet apporte concrètement? Retournez y réfléchir sous l'angle du client.\n\n[DÉCISION: RETENTEZ]`},
 
   // Antoine / Blanc (étage 67)
   { id:'blanc', floor:67, nom:'ANTOINE', titre:'EXPERT EN DONNÉES', chapeau:'CHAPEAU BLANC',
     cam:'CAM-05', protocol:'DONNÉES & FAITS', video:'video/scene04.mp4', photo:'images/photo-antoine-blanc.png', accentColor:'#141414',
     dialogue(t){return[{from:'persona',text:`Curieux projet. Qu'est-ce que c'est?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Quelles données factuelles, statistiques ou recherches justifient vos choix visuels et créatifs?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Antoine, expert en faits et données (Chapeau Blanc). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu incarnes Antoine, expert en faits et données neutres qui porte le Chapeau Blanc de la méthode De Bono. Tu sépares les faits des opinions. Tu es calme, précis, sans émotion.\n\nBrief du projet :\nTitre : ${t}\nConcept : ${b}\n\nÉvalue la réponse. Tu cherches : des faits vérifiables, des données concrètes, la distinction entre ce qu'on sait et ce qu'on suppose. Réponds EN PERSONNAGE (tu ES Antoine, Chapeau Blanc) en 3-4 phrases, en français canadien.\n\nÀ la toute fin, sur une ligne seule :\n[DÉCISION: MONTEZ] si la réponse s'appuie sur des faits tangibles\n[DÉCISION: RETENTEZ] si la réponse confond intuition et fait`},
+    mockPass:`Les faits sont là. Vous avez appuyé vos choix sur des données observables. La distinction entre ce que vous savez et ce que vous supposez est claire.\n\n[DÉCISION: MONTEZ]`, mockRetry:`Je relève plusieurs affirmations non étayées. Quelles études, quels benchmarks supportent vos décisions visuelles? Recommencez avec des faits.\n\n[DÉCISION: RETENTEZ]`},
 
   // Gabriel / Vert (étage 83)
   { id:'vert', floor:83, nom:'GABRIEL', titre:'CATALYSEUR CRÉATIF', chapeau:'CHAPEAU VERT',
     cam:'CAM-06', protocol:'CRÉATIVITÉ & ALTERNATIVES', video:'video/scene05.mp4', photo:'images/photo-gabriel-vert.png', accentColor:'#0a1200',
     dialogue(t){return[{from:'persona',text:`Hé, beau projet là. C'est quoi?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Cool. Mais quelles alternatives avez-vous explorées? Qu'est-ce qui aurait pu être complètement différent?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Gabriel, catalyseur créatif (Chapeau Vert). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu incarnes Gabriel, catalyseur créatif qui porte le Chapeau Vert de la méthode De Bono. Tu penses latéralement. Tu n'acceptes pas le premier concept venu — tu veux voir la curiosité et l'audace.\n\nBrief du projet :\nTitre : ${t}\nConcept : ${b}\n\nÉvalue la réponse. Tu cherches : des alternatives explorées, une démarche d'idéation visible, la capacité à questionner ses propres choix. Réponds EN PERSONNAGE (tu ES Gabriel, Chapeau Vert) en 3-4 phrases, en français canadien.\n\nÀ la toute fin, sur une ligne seule :\n[DÉCISION: MONTEZ] si l'étudiant·e a exploré des pistes et fait un choix créatif délibéré\n[DÉCISION: RETENTEZ] si la première idée a été gardée sans exploration`},
+    mockPass:`Là on parle! Vous n'avez pas pris le chemin le plus évident — vous avez exploré, testé, choisi consciemment.\n\n[DÉCISION: MONTEZ]`, mockRetry:`Votre première idée était votre seule idée. Je le sens. Qu'est-ce que vous avez rejeté? Pourquoi? Retournez explorer.\n\n[DÉCISION: RETENTEZ]`},
 
   // Martine / Bleu (étage 97)
   { id:'bleu', floor:97, nom:'MARTINE', titre:'DIRECTRICE DE PROCESSUS', chapeau:'CHAPEAU BLEU',
     cam:'CAM-07', protocol:'SYNTHÈSE & PROCESSUS', video:'video/scene06.mp4', photo:'images/photo-martine-bleu.png', accentColor:'#00080f',
     dialogue(t){return[{from:'persona',text:`Voilà un projet intéressant. Résumez-le moi.`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Faites-moi une synthèse structurée de votre démarche créative, de votre processus de décision, et de votre prochaine étape concrète.`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Martine, directrice de processus (Chapeau Bleu). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu incarnes Martine, directrice de processus et méta-pensée qui porte le Chapeau Bleu de la méthode De Bono. Tu organises, tu synthétises, tu évalues la cohérence globale de la démarche.\n\nBrief du projet :\nTitre : ${t}\nConcept : ${b}\n\nÉvalue la réponse. Tu cherches : une synthèse structurée, une réflexion méta sur le processus, la capacité à articuler les prochaines étapes concrètes. Réponds EN PERSONNAGE (tu ES Martine, Chapeau Bleu) en 3-4 phrases, en français canadien.\n\nÀ la toute fin, sur une ligne seule :\n[DÉCISION: MONTEZ] si l'étudiant·e démontre une pensée structurée et des prochaines étapes claires\n[DÉCISION: RETENTEZ] si la réponse est désorganisée ou manque de recul`},
+    mockPass:`Voilà quelqu'un qui sait où il/elle s'en va. La démarche est lisible, les prochaines étapes sont concrètes.\n\n[DÉCISION: MONTEZ]`, mockRetry:`Je vois un résultat, mais pas une démarche. Structurez votre réponse et revenez.\n\n[DÉCISION: RETENTEZ]`},
 ];
 
 // ============================================================
@@ -1596,16 +1596,24 @@ async function callGemini(persona, studentResponse) {
     generationConfig: { temperature: 0.82, maxOutputTokens: 320 },
   };
 
-  try {
-    const res = await fetch(url, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-    });
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-    return data.candidates[0].content.parts[0].text;
-  } catch (e) {
-    console.error('Gemini error:', e);
-    return studentResponse.length > 90 ? persona.mockPass : persona.mockRetry;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      });
+      if (res.status === 429) {
+        console.warn(`[ASCENSEUR] 429 — tentative ${attempt}/3...`);
+        if (attempt < 3) { await delay(attempt * 15000); continue; }
+        return persona.mockPass;
+      }
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      return data.candidates[0].content.parts[0].text;
+    } catch (e) {
+      console.error('Gemini error:', e);
+      if (attempt === 3) return studentResponse.length > 90 ? persona.mockPass : persona.mockRetry;
+      await delay(3000);
+    }
   }
 }
 
