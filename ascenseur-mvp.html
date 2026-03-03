@@ -737,22 +737,65 @@
       display: flex; gap: 10px; flex-wrap: wrap; padding-top: 4px;
     }
 
-    /* ===== @MEDIA PRINT ===== */
+    /* ===== RÉTROACTION REFUS (overlay plein écran sur screen-verdict) ===== */
+    .verdict-feedback {
+      position: absolute; inset: 0; z-index: 20;
+      background: rgba(0,0,0,0.92);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px; overflow-y: auto;
+    }
+    .verdict-feedback-inner {
+      width: 100%; max-width: 520px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .verdict-feedback-title {
+      font-size: 11px; letter-spacing: 0.35em; color: #484848;
+      border-bottom: 1px solid #1e1e1e; padding-bottom: 10px;
+    }
+    .verdict-feedback-list { display: flex; flex-direction: column; gap: 14px; }
+    .verdict-feedback-item { display: flex; flex-direction: column; gap: 5px; }
+    .verdict-feedback-hat {
+      font-size: 11px; letter-spacing: 0.2em; color: #585858;
+    }
+    .verdict-feedback-eval {
+      font-size: 14px; color: #909090; line-height: 1.75;
+      border-left: 2px solid #282828; padding-left: 12px; font-style: italic;
+    }
+
+    /* ===== @MEDIA PRINT — FOND BLANC, TEXTE NOIR ===== */
     @media print {
       .no-print { display: none !important; }
-      body { background: #060606 !important; }
+      /* Structure */
+      body, #screen-summary, .rapport-page { background: #fff !important; }
       body::before, body::after { display: none !important; }
-      #cctv-hud, .noise-line, #toast { display: none !important; }
+      #cctv-hud, .noise-line, #toast, .verdict-feedback { display: none !important; }
       .screen { display: none !important; }
       #screen-summary { display: block !important; position: static !important; overflow: visible !important; }
       .rapport-page { padding: 12px 10px; max-width: 100%; }
-      .rapport-header { margin-bottom: 8px; }
-      .rapport-title { font-size: 22px; }
-      .rcard-visual { height: 160px; }
-      .rcard-num { font-size: 110px; }
+      /* En-tête */
+      .rapport-header { background: #fff !important; border-color: #ccc !important; margin-bottom: 8px; }
+      .rapport-header-label { background: #fff !important; color: #666 !important; }
+      .rapport-title { font-size: 22px; color: #111 !important; }
+      .rapport-meta { color: #555 !important; }
+      /* Cartes */
+      .rcard { background: #fff !important; border-color: #ccc !important; break-inside: avoid; }
+      .rcard-visual { height: 140px; background: #f0f0f0 !important; }
+      .rcard-num { font-size: 100px; color: #ccc !important; }
+      .rcard-num::after, .rcard-photo-wrap::after { display: none !important; }
+      .rcard-floor-strip { background: rgba(0,0,0,0.35) !important; color: #fff !important; }
+      /* Textes des cartes */
+      .rcard-chapeau { color: #333 !important; }
+      .rcard-badge { color: #333 !important; border-color: #999 !important; }
+      .rcard-badge.pass  { color: #1a6b1a !important; border-color: #1a6b1a !important; }
+      .rcard-badge.retry { color: #8b0000 !important; border-color: #8b0000 !important; }
+      .rcard-badge.demo  { color: #555 !important; border-color: #aaa !important; }
+      .rcard-response { color: #555 !important; border-color: #ccc !important; }
+      .rcard-eval { color: #222 !important; }
+      .rcard-pending { opacity: 0.5 !important; }
+      /* Force la précision de couleur pour les images */
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
-    /* Mode paysage : 3 colonnes */
+    /* Grilles d'impression */
     body.print-landscape .rapport-grid { grid-template-columns: repeat(3, 1fr); }
     @media print {
       body.print-landscape { size: 11in 8.5in landscape; }
@@ -1076,6 +1119,14 @@
         <span><span id="verdict-avg-value" class="verdict-avg-value">--</span><span class="verdict-avg-unit">%</span></span>
       </div>
       <div id="verdict-decision-el" class="verdict-decision">---</div>
+    </div>
+  </div>
+  <!-- Rétroaction sur refus — s'affiche après le verdict si avg < 65 -->
+  <div id="verdict-feedback" class="verdict-feedback" style="display:none;">
+    <div class="verdict-feedback-inner">
+      <div class="verdict-feedback-title">FAILLES DU PROJET — POINTS À REVOIR</div>
+      <div id="verdict-feedback-list" class="verdict-feedback-list"></div>
+      <button class="btn primary" id="verdict-continue-btn">[ CONTINUER → RAPPORT FINAL ]</button>
     </div>
   </div>
 </div>
@@ -1797,6 +1848,44 @@ async function showVerdict(pitch) {
   decEl.classList.add('visible', won ? 'accord' : 'refus');
   await delay(2200);
 
+  // Si refus : afficher la rétroaction avant la vidéo de conclusion
+  if (!won) {
+    const hatsMeta = [
+      { id:'noir',  label:'CHAPEAU NOIR',  nom:'CLAUDE'   },
+      { id:'rouge', label:'CHAPEAU ROUGE', nom:'BÉATRICE' },
+      { id:'jaune', label:'CHAPEAU JAUNE', nom:'FLORENCE' },
+      { id:'blanc', label:'CHAPEAU BLANC', nom:'ANTOINE'  },
+      { id:'vert',  label:'CHAPEAU VERT',  nom:'GABRIEL'  },
+      { id:'bleu',  label:'CHAPEAU BLEU',  nom:'MARTINE'  },
+    ];
+    // Trier par score croissant pour montrer les failles en premier
+    const ranked = hatsMeta
+      .map(h => ({ ...h, score: scores[h.id] ?? 60 }))
+      .sort((a, b) => a.score - b.score);
+
+    const feedbackList = document.getElementById('verdict-feedback-list');
+    feedbackList.innerHTML = '';
+    ranked.forEach(h => {
+      const result = G.results.find(r => r.persona.id === h.id);
+      if (!result) return;
+      const item = document.createElement('div');
+      item.className = 'verdict-feedback-item';
+      item.innerHTML = `
+        <div class="verdict-feedback-hat">${h.label} — ${h.nom} · ${h.score}%</div>
+        <div class="verdict-feedback-eval">${result.evaluation || '—'}</div>`;
+      feedbackList.appendChild(item);
+    });
+
+    const feedbackEl = document.getElementById('verdict-feedback');
+    feedbackEl.style.display = 'flex';
+
+    // Attendre que le joueur clique sur Continuer
+    await new Promise(resolve => {
+      document.getElementById('verdict-continue-btn').onclick = () => resolve();
+    });
+    feedbackEl.style.display = 'none';
+  }
+
   // Vidéo de conclusion
   overlay.style.display = 'none';
   video.loop = false;
@@ -1805,7 +1894,6 @@ async function showVerdict(pitch) {
   let done = false;
   function finish() { if (done) return; done = true; showSummary(); }
   video.onended = finish;
-  // Victoire : stoppe à 3.5s puis passe au rapport
   if (won) setTimeout(finish, 3500);
   else     setTimeout(finish, 20000);
 }
