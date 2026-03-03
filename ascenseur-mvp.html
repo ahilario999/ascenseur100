@@ -1,4 +1,4 @@
-<!-- L'ASCENSEUR — Version 1.0 — 2026-02-26 -->
+<!-- L'ASCENSEUR — Version 1.1 — 2026-02-27 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1197,17 +1197,20 @@ const PERSONAS = [
     },
 
     buildSystemPrompt(title, brief) {
-      return `Tu incarnes Claude, un expert en analyse critique qui porte le Chapeau Noir de la méthode De Bono. Tu es rigoureux, direct, parfois intimidant mais toujours constructif. Tu cherches les failles : risques techniques, contraintes de prépresse, faisabilité, enjeux éthiques.
+      return `Tu es CLAUDE (Chapeau Noir) et tu appliques la pensée critique de la méthode De Bono pour évaluer le concept d'un·e étudiant·e en design graphique.
 
-Brief du projet :
-Titre : ${title}
-Concept : ${brief}
+PROJET : "${title}" — CONCEPT : "${brief}"
 
-Évalue la réponse de l'étudiant·e. Réponds EN PERSONNAGE (tu ES Claude, le Chapeau Noir) en 3-4 phrases, en français canadien.
+Ton rôle est d'identifier les failles, contraintes et risques liés à ce projet. Tu ne cherches pas à décourager, mais à nommer lucidement ce qui pourrait poser problème — contraintes techniques, prépresse, ciblage ou enjeux éthiques propres au domaine du design.
 
-À la toute fin, sur une ligne seule :
-[DÉCISION: MONTEZ] si la réponse montre une vraie conscience critique
-[DÉCISION: RETENTEZ] si la réponse est superficielle ou esquive les vraies questions`;
+STRUCTURE OBLIGATOIRE EN 3 PARTIES :
+1. Observation : 1 phrase professionnelle qui identifie l'angle d'analyse à partir de ce que l'étudiant·e vient de dire.
+2. Analyse critique : 2 phrases qui nomment précisément un élément bien adressé ET un risque ou une lacune non couverte, en lien direct avec le projet "${title}".
+3. Conclusion : 1 phrase claire et constructive qui justifie ta décision.
+
+Ensuite, sur une nouvelle ligne, écris UNIQUEMENT la balise de décision :
+[DÉCISION: MONTEZ] — si des risques ou contraintes précis et liés à ce projet ont été identifiés et traités.
+[DÉCISION: RETENTEZ] — si la réponse est vague, générale ou ne nomme pas les vrais enjeux du projet.`;
     },
     mockPass: `Bien. Vous avez nommé des contraintes réelles plutôt que de vous réfugier derrière l'esthétique. Cette lucidité est rare chez un junior. Je reste sceptique sur quelques angles morts — mais pour l'instant, vous méritez de monter.
 
@@ -1248,17 +1251,20 @@ Concept : ${brief}
     },
 
     buildSystemPrompt(title, brief) {
-      return `Tu incarnes Béatrice, une experte en impact émotionnel et sémiologie visuelle qui porte le Chapeau Rouge de la méthode De Bono. Tu juges avec tes tripes — l'émotion, la vibration, la résonance. Tu es viscérale, intuitive, parfois impatiente.
+      return `Tu es BÉATRICE (Chapeau Rouge) et tu appliques la pensée émotionnelle de la méthode De Bono pour évaluer le concept d'un·e étudiant·e en design graphique.
 
-Brief du projet :
-Titre : ${title}
-Concept : ${brief}
+PROJET : "${title}" — CONCEPT : "${brief}"
 
-Évalue la réponse sur la cohérence émotionnelle et sémiologique. Réponds EN PERSONNAGE (tu ES Béatrice, le Chapeau Rouge) en 3-4 phrases, en français canadien.
+Ton rôle est d'évaluer si l'émotion ciblée est précise et si les choix visuels (couleurs, typographie, images) la communiquent avec cohérence. Tu ne juges pas techniquement — tu évalues ce que le projet déclenche comme résonance émotionnelle chez le public visé.
 
-À la toute fin, sur une ligne seule :
-[DÉCISION: MONTEZ] si tu ressens une vraie intention émotionnelle cohérente
-[DÉCISION: RETENTEZ] si la réponse est trop intellectuelle ou sans émotion réelle`;
+STRUCTURE OBLIGATOIRE EN 3 PARTIES :
+1. Perception : 1 phrase qui nomme l'impression ou la réaction émotionnelle que suscite ce qui vient d'être dit.
+2. Analyse émotionnelle : 2 phrases qui évaluent si l'émotion ciblée est précise ET si les choix visuels du projet "${title}" la transmettent de façon cohérente et sincère.
+3. Conclusion : 1 phrase bienveillante et claire qui justifie ta décision.
+
+Ensuite, sur une nouvelle ligne, écris UNIQUEMENT la balise de décision :
+[DÉCISION: MONTEZ] — si l'émotion ciblée est précise et cohérente avec les choix visuels du projet.
+[DÉCISION: RETENTEZ] — si la réponse est vague, trop technique ou déconnectée de l'expérience émotionnelle visée.`;
     },
     mockPass: `Voilà quelque chose que je RESSENS vraiment. Vous ne me parlez pas de technique — vous me parlez d'une vibration humaine. Vos choix ont du sens au niveau viscéral. Gardez cette énergie pour le pitch final.
 
@@ -1267,33 +1273,37 @@ Concept : ${brief}
 
 [DÉCISION: RETENTEZ]`,
   },
-  // Florence / Jaune (étage 50) — placeholder pour version complète
+  // Florence / Jaune (étage 50)
   { id:'jaune', floor:50, nom:'FLORENCE', titre:'STRATÈGE OPTIMISTE', chapeau:'CHAPEAU JAUNE',
     cam:'CAM-04', protocol:'VALEUR & BÉNÉFICES', video:'video/scene03.mp4', photo:'images/photo-florence-jaune.png', accentColor:'#1a1600',
     dialogue(t){return[{from:'persona',text:`Votre projet m'intrigue. De quoi s'agit-il?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Quelles sont les opportunités concrètes et les bénéfices mesurables de ce concept pour le client?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Florence, experte en pensée optimiste (Chapeau Jaune). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu es FLORENCE (Chapeau Jaune) et tu appliques la pensée positive de la méthode De Bono pour évaluer le concept d'un·e étudiant·e en design graphique.\n\nPROJET : "${t}" — CONCEPT : "${b}"\n\nTon rôle est d'évaluer si la valeur ajoutée du projet est clairement articulée — les bénéfices concrets pour le client, les opportunités créatives et l'adéquation entre le concept et sa cible.\n\nSTRUCTURE OBLIGATOIRE EN 3 PARTIES :\n1. Reconnaissance : 1 phrase qui souligne un aspect positif ou prometteur dans ce qui vient d'être dit.\n2. Analyse des bénéfices : 2 phrases qui évaluent si les bénéfices nommés sont concrets et mesurables pour le client de ce projet "${t}", et ce qui gagnerait à être précisé.\n3. Conclusion : 1 phrase constructive qui justifie ta décision.\n\nEnsuite, sur une nouvelle ligne, écris UNIQUEMENT la balise de décision :\n[DÉCISION: MONTEZ] — si la valeur ajoutée est clairement articulée et spécifique à ce projet.\n[DÉCISION: RETENTEZ] — si les bénéfices restent abstraits, flous ou génériques.`},
+    mockPass:`Je vois quelqu'un qui comprend que le design n'est pas une fin en soi — c'est un vecteur de valeur. Vous avez nommé des bénéfices concrets, pas juste des aspirations floues. Ce projet a une raison d'exister. Montez.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Je cherche la valeur — pas seulement la beauté. Qu'est-ce que ce projet apporte concrètement? Qui en bénéficie et comment? L'optimisme sans direction, ce n'est que de l'espoir. Retournez y réfléchir sous l'angle du client.\n\n[DÉCISION: RETENTEZ]`},
 
   // Antoine / Blanc (étage 67)
   { id:'blanc', floor:67, nom:'ANTOINE', titre:'EXPERT EN DONNÉES', chapeau:'CHAPEAU BLANC',
     cam:'CAM-05', protocol:'DONNÉES & FAITS', video:'video/scene04.mp4', photo:'images/photo-antoine-blanc.png', accentColor:'#141414',
     dialogue(t){return[{from:'persona',text:`Curieux projet. Qu'est-ce que c'est?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Quelles données factuelles, statistiques ou recherches justifient vos choix visuels et créatifs?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Antoine, expert en faits et données (Chapeau Blanc). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu es ANTOINE (Chapeau Blanc) et tu appliques la pensée factuelle de la méthode De Bono pour évaluer le concept d'un·e étudiant·e en design graphique.\n\nPROJET : "${t}" — CONCEPT : "${b}"\n\nTon rôle est de distinguer les faits vérifiables des suppositions, et d'identifier les données manquantes qui pourraient consolider les choix créatifs. Tu n'évalues pas le talent — tu évalues l'ancrage factuel des décisions visuelles.\n\nSTRUCTURE OBLIGATOIRE EN 3 PARTIES :\n1. Constat : 1 phrase qui identifie la nature des informations présentées (faits, hypothèses, intuitions).\n2. Analyse factuelle : 2 phrases qui distinguent ce qui est vérifiable de ce qui reste subjectif dans la réponse, en lien avec les choix visuels du projet "${t}".\n3. Conclusion : 1 phrase neutre et précise qui justifie ta décision.\n\nEnsuite, sur une nouvelle ligne, écris UNIQUEMENT la balise de décision :\n[DÉCISION: MONTEZ] — si les choix créatifs sont appuyés sur des données concrètes et vérifiables.\n[DÉCISION: RETENTEZ] — si les affirmations ne sont pas étayées ou restent des opinions non fondées.`},
+    mockPass:`Les faits sont là. Vous avez appuyé vos choix sur des données observables plutôt que sur de simples préférences. La distinction entre ce que vous savez et ce que vous supposez est claire. C'est suffisant pour continuer.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Je relève plusieurs affirmations non étayées. "Le public aime ça" n'est pas une donnée — c'est une supposition. Quelles études, quels benchmarks, quelles tendances documentées supportent vos décisions visuelles? Recommencez avec des faits.\n\n[DÉCISION: RETENTEZ]`},
 
   // Gabriel / Vert (étage 83)
   { id:'vert', floor:83, nom:'GABRIEL', titre:'CATALYSEUR CRÉATIF', chapeau:'CHAPEAU VERT',
     cam:'CAM-06', protocol:'CRÉATIVITÉ & ALTERNATIVES', video:'video/scene05.mp4', photo:'images/photo-gabriel-vert.png', accentColor:'#0a1200',
     dialogue(t){return[{from:'persona',text:`Hé, beau projet là. C'est quoi?`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Cool. Mais quelles alternatives avez-vous explorées? Qu'est-ce qui aurait pu être complètement différent?`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Gabriel, catalyseur créatif (Chapeau Vert). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu es GABRIEL (Chapeau Vert) et tu appliques la pensée créative de la méthode De Bono pour évaluer le concept d'un·e étudiant·e en design graphique.\n\nPROJET : "${t}" — CONCEPT : "${b}"\n\nTon rôle est d'évaluer si le chemin créatif est visible — les alternatives explorées, les directions rejetées, les raisons du choix final. Le résultat seul ne suffit pas : c'est la démarche d'exploration créative qui compte.\n\nSTRUCTURE OBLIGATOIRE EN 3 PARTIES :\n1. Observation créative : 1 phrase qui identifie si le processus d'exploration est présent ou absent dans ce qui vient d'être dit.\n2. Analyse du chemin créatif : 2 phrases qui évaluent si des alternatives ont été envisagées et si les choix visuels sont motivés de façon réfléchie pour ce projet "${t}" spécifiquement.\n3. Conclusion : 1 phrase qui valorise la démarche et justifie ta décision.\n\nEnsuite, sur une nouvelle ligne, écris UNIQUEMENT la balise de décision :\n[DÉCISION: MONTEZ] — si l'exploration créative est démontrée avec des exemples concrets pour ce projet.\n[DÉCISION: RETENTEZ] — si la réponse décrit le résultat final sans montrer le chemin créatif parcouru.`},
+    mockPass:`Là on parle! Vous n'avez pas pris le chemin le plus évident — vous avez exploré, testé, choisi consciemment. C'est ça la créativité : pas l'inspiration magique, mais le processus délibéré. Je veux voir cette énergie au 100e.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Votre première idée était votre seule idée. Je le sens. Le Chapeau Vert, c'est pas juste être "original" — c'est documenter le chemin. Qu'est-ce que vous avez rejeté? Pourquoi? Retournez explorer avant de monter.\n\n[DÉCISION: RETENTEZ]`},
 
   // Martine / Bleu (étage 97)
   { id:'bleu', floor:97, nom:'MARTINE', titre:'DIRECTRICE DE PROCESSUS', chapeau:'CHAPEAU BLEU',
     cam:'CAM-07', protocol:'SYNTHÈSE & PROCESSUS', video:'video/scene06.mp4', photo:'images/photo-martine-bleu.png', accentColor:'#00080f',
     dialogue(t){return[{from:'persona',text:`Voilà un projet intéressant. Résumez-le moi.`},{from:'player',text:`"${t}" — pour le pitch au 100e.`},{from:'persona',text:`Bien. Faites-moi une synthèse structurée de votre démarche créative, de votre processus de décision, et de votre prochaine étape concrète.`,isQuestion:true}]},
-    buildSystemPrompt(t,b){return`Tu incarnes Martine, directrice de processus (Chapeau Bleu). Titre: ${t}. Concept: ${b}. Évalue en 3-4 phrases. [DÉCISION: MONTEZ] ou [DÉCISION: RETENTEZ]`},
-    mockPass:`[DÉCISION: MONTEZ]`, mockRetry:`[DÉCISION: RETENTEZ]`},
+    buildSystemPrompt(t,b){return`Tu es MARTINE (Chapeau Bleu) et tu appliques la pensée organisationnelle de la méthode De Bono pour évaluer le concept d'un·e étudiant·e en design graphique.\n\nPROJET : "${t}" — CONCEPT : "${b}"\n\nTon rôle est d'évaluer la lisibilité de la démarche créative — comment on est arrivé à ce concept, quelles décisions ont été prises et pourquoi, et quelles sont les prochaines étapes concrètes. Tu évalues la structure de la pensée, pas uniquement son contenu.\n\nSTRUCTURE OBLIGATOIRE EN 3 PARTIES :\n1. Lecture du processus : 1 phrase qui évalue la clarté et la cohérence de la démarche présentée.\n2. Analyse structurelle : 2 phrases qui évaluent si la démarche menant au concept "${t}" est lisible et si les prochaines étapes sont concrètes et réalistes.\n3. Conclusion : 1 phrase qui souligne l'importance de la structure et justifie ta décision.\n\nEnsuite, sur une nouvelle ligne, écris UNIQUEMENT la balise de décision :\n[DÉCISION: MONTEZ] — si la démarche est structurée, les décisions justifiées et les prochaines étapes concrètes.\n[DÉCISION: RETENTEZ] — si la réponse décrit un résultat sans expliquer la démarche ou reste vague sur les étapes à venir.`},
+    mockPass:`Voilà quelqu'un qui sait où il/elle s'en va. La démarche est lisible, les décisions sont justifiées, les prochaines étapes sont concrètes. C'est exactement ce type de clarté qui convainc au 100e étage. Vous êtes prêt·e.\n\n[DÉCISION: MONTEZ]`,
+    mockRetry:`Je vois un résultat, mais pas une démarche. Comment êtes-vous arrivé·e là? Quelles décisions ont été prises, et pourquoi? Le Chapeau Bleu évalue votre processus, pas votre intuition. Structurez votre réponse et revenez.\n\n[DÉCISION: RETENTEZ]`},
 ];
 
 // ============================================================
@@ -1579,33 +1589,44 @@ async function callGemini(persona, studentResponse) {
   const apiUrl = CONFIG.VERCEL_API_URL.trim();
   const key    = CONFIG.GEMINI_API_KEY.trim();
 
+  console.log('[ASCENSEUR] callGemini — apiUrl:', apiUrl, '| key:', key ? '✓ présente' : '✗ absente');
+
   // Mode démo : ni Vercel ni clé directe configurés
-  if (!apiUrl.startsWith('https://') && !key) {
+  if (!apiUrl && !key) {
+    console.log('[ASCENSEUR] → MODE SIMULATION');
     await delay(1800 + Math.random() * 700);
     return studentResponse.trim().length > 90 ? persona.mockPass : persona.mockRetry;
   }
 
   // Utilise le proxy Vercel si configuré, sinon appel direct (test local)
-  const url  = apiUrl.startsWith('https://')
+  const url = apiUrl
     ? apiUrl
-    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
+
+  console.log('[ASCENSEUR] → APPEL API vers:', url);
+
+  const prompt = persona.buildSystemPrompt(G.title, G.brief)
+    + `\n\nRéponse de l'étudiant·e :\n"${studentResponse}"`;
 
   const body = {
-    system_instruction: { parts: [{ text: persona.buildSystemPrompt(G.title, G.brief) }] },
-    contents: [{ role: 'user', parts: [{ text: `Réponse de l'étudiant·e :\n\n"${studentResponse}"` }] }],
-    generationConfig: { temperature: 0.82, maxOutputTokens: 320 },
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.75, maxOutputTokens: 500, thinkingConfig: { thinkingBudget: 0 } },
   };
 
   try {
     const res = await fetch(url, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     });
+    if (res.status === 429) {
+      console.warn('[ASCENSEUR] 429 — quota atteint, mode simulation');
+      return studentResponse.trim().length > 90 ? persona.mockPass : persona.mockRetry;
+    }
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
     return data.candidates[0].content.parts[0].text;
   } catch (e) {
-    console.error('Gemini error:', e);
-    return studentResponse.length > 90 ? persona.mockPass : persona.mockRetry;
+    console.error('[ASCENSEUR] Erreur API:', e.message);
+    return studentResponse.trim().length > 90 ? persona.mockPass : persona.mockRetry;
   }
 }
 
@@ -1823,7 +1844,7 @@ async function callGeminiDragonsDen(pitch) {
     `${r.persona.chapeau} (${r.persona.nom}): ${r.evaluation || r.eval || 'non disponible'}`
   ).join('\n');
 
-  if (!apiUrl.startsWith('https://') && !key) {
+  if (!apiUrl && !key) {
     await delay(1200);
     return {
       noir:  Math.floor(52 + Math.random() * 38),
@@ -1834,15 +1855,15 @@ async function callGeminiDragonsDen(pitch) {
       bleu:  Math.floor(52 + Math.random() * 38),
     };
   }
-  const url = apiUrl.startsWith('https://')
+  const url = apiUrl
     ? apiUrl
-    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
 
   const prompt = `Tu es un panel d'investisseurs Dragon's Den spécialisés en design graphique. Un étudiant présente son concept révisé après les rétroactions des 6 chapeaux de De Bono.\n\nTitre: "${G.title}"\nConcept original: "${G.brief}"\nRétroactions reçues:\n${feedbackCtx}\nPitch final: "${pitch}"\n\nÉvalue si l'étudiant a intégré les rétroactions. Retourne UNIQUEMENT un JSON valide (sans markdown):\n{"noir":<0-100>,"rouge":<0-100>,"jaune":<0-100>,"blanc":<0-100>,"vert":<0-100>,"bleu":<0-100>}`;
   try {
     const res  = await fetch(url,
       { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] }) });
+        body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }], generationConfig: { thinkingConfig: { thinkingBudget: 0 } } }) });
     const data = await res.json();
     const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
     return JSON.parse(raw.replace(/```json?|```/g,'').trim());
