@@ -585,6 +585,12 @@
     .verdict-decision.visible { opacity: 1; }
     .verdict-decision.accord { border-color: #484848; color: #a0a0a0; }
     .verdict-decision.refus  { border-color: #282828; color: #484848; }
+    .verdict-summary-text {
+      font-size: 13px; color: #686868; line-height: 1.75;
+      font-style: italic; padding: 10px 2px 2px;
+      opacity: 0; transition: opacity 0.6s;
+    }
+    .verdict-summary-text.visible { opacity: 1; }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 380px) { .title-main { font-size: 48px; } .elev-floor-num { font-size: 80px; } }
@@ -760,6 +766,58 @@
     .verdict-feedback-eval {
       font-size: 14px; color: #909090; line-height: 1.75;
       border-left: 2px solid #282828; padding-left: 12px; font-style: italic;
+    }
+
+    /* ===== ANGLES REMINDER — RAPPEL DES 6 CHAPEAUX ===== */
+    .angles-reminder {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .angles-reminder-title {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: #606060;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .angles-reminder-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .angle-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .angle-badge {
+      flex-shrink: 0;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      padding: 1px 5px;
+      border-radius: 2px;
+      border: 1px solid currentColor;
+      text-transform: uppercase;
+      min-width: 60px;
+      text-align: center;
+      margin-top: 1px;
+    }
+    .angle-text {
+      color: #9a9a9a;
+      flex: 1;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .angle-text em {
+      font-style: normal;
+      color: #c0c0c0;
     }
 
     /* ===== @MEDIA PRINT — FOND BLANC, TEXTE NOIR ===== */
@@ -1094,6 +1152,13 @@
           <span id="board-session-id">---</span>
         </div>
         <div class="board-form-body">
+          <!-- Rappel des 6 angles -->
+          <div class="angles-reminder" id="angles-reminder">
+            <div class="angles-reminder-title">▸ POINTS ABORDÉS PAR LES EXPERTS — INTÉGREZ-LES DANS VOTRE PITCH</div>
+            <div class="angles-reminder-list" id="angles-reminder-list">
+              <!-- Rempli dynamiquement par buildAngleReminder() -->
+            </div>
+          </div>
           <label class="field-label">Intégrez les rétroactions des 6 experts dans votre concept bonifié</label>
           <textarea class="field-input" id="boardroom-pitch" rows="5"
             placeholder="Présentez votre concept révisé en tenant compte des rétroactions reçues..."></textarea>
@@ -1119,6 +1184,7 @@
         <span><span id="verdict-avg-value" class="verdict-avg-value">--</span><span class="verdict-avg-unit">%</span></span>
       </div>
       <div id="verdict-decision-el" class="verdict-decision">---</div>
+      <div id="verdict-summary-text" class="verdict-summary-text" style="display:none;"></div>
     </div>
   </div>
   <!-- Rétroaction sur refus — s'affiche après le verdict si avg < 65 -->
@@ -1762,6 +1828,58 @@ async function showEvaluation(idx, studentResponse) {
 // RAPPORT FINAL
 // ============================================================
 // ============================================================
+// RAPPEL DES 6 ANGLES — construit à partir de G.results
+// ============================================================
+function buildAngleReminder() {
+  const list = document.getElementById('angles-reminder-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  // Correspondance id → couleur CSS
+  const hatColors = {
+    noir:   '#c0c0c0',
+    rouge:  '#e05050',
+    jaune:  '#d4a800',
+    blanc:  '#e8e8e8',
+    vert:   '#58b858',
+    bleu:   '#4a9eda'
+  };
+
+  // Ordre des chapeaux De Bono
+  const order = ['blanc','rouge','noir','jaune','vert','bleu'];
+
+  order.forEach(id => {
+    const result = G.results.find(r => r.persona && r.persona.id === id);
+    if (!result) return;
+
+    const p    = result.persona;
+    const eval_ = result.evaluation || result.eval || '';
+    const color = hatColors[id] || '#aaa';
+
+    const item = document.createElement('div');
+    item.className = 'angle-item';
+
+    // Badge chapeau
+    const badge = document.createElement('span');
+    badge.className = 'angle-badge';
+    badge.style.color = color;
+    badge.style.borderColor = color;
+    badge.textContent = p.chapeau || id.toUpperCase();
+    item.appendChild(badge);
+
+    // Texte : protocole + résumé évaluation
+    const text = document.createElement('span');
+    text.className = 'angle-text';
+    // Protocole en gras simulé (em), puis courte amorce de l'évaluation
+    const short = eval_.length > 120 ? eval_.substring(0, 118) + '…' : eval_;
+    text.innerHTML = `<em>${p.protocol || ''}</em>${short ? ' — ' + short : ''}`;
+    item.appendChild(text);
+
+    list.appendChild(item);
+  });
+}
+
+// ============================================================
 // BOARDROOM — ÉTAGE 100
 // ============================================================
 const BOARDROOM_FREEZE_AT = 9.5;
@@ -1769,40 +1887,24 @@ const BOARDROOM_FREEZE_AT = 9.5;
 function showBoardroom() {
   showScreen('screen-boardroom');
   updateHUD(100, 'PITCH FINAL — SALLE DU CONSEIL');
-  document.getElementById('boardroom-entry-wrap').style.display = 'block';
-  document.getElementById('boardroom-room-wrap').style.display = 'none';
 
-  const video = document.getElementById('boardroom-entry-video');
-  if (video._rafId) { cancelAnimationFrame(video._rafId); video._rafId = null; }
-  video.oncanplay = null; video.onerror = null;
-  let froze = false;
+  // ── La vidéo d'entrée (scene7x.mp4) joue maintenant dans showVerdict()
+  // ── On affiche directement le formulaire de pitch
+  document.getElementById('boardroom-entry-wrap').style.display = 'none';
+  const room = document.getElementById('boardroom-room-wrap');
+  room.style.display = 'block';
 
-  function doFreeze() {
-    if (froze) return; froze = true;
-    if (video._rafId) { cancelAnimationFrame(video._rafId); video._rafId = null; }
-    video.pause();
-    document.getElementById('boardroom-entry-wrap').style.display = 'none';
-    const room = document.getElementById('boardroom-room-wrap');
-    room.style.display = 'block';
-    document.getElementById('board-session-id').textContent = G.sessionId;
-    document.getElementById('board-proj-title').textContent = G.title;
-    document.getElementById('boardroom-pitch').value = '';
-    document.getElementById('board-char-count').textContent = '0 / min. 80 car.';
-    // Re-déclencher l'animation zoom
-    const img = room.querySelector('.board-bg-img');
-    img.style.animation = 'none'; img.offsetHeight; img.style.animation = '';
-  }
-  function watch() {
-    if (froze) return;
-    if (video.currentTime >= BOARDROOM_FREEZE_AT || video.ended) doFreeze();
-    else video._rafId = requestAnimationFrame(watch);
-  }
-  video.onended = doFreeze;
-  video.onerror = doFreeze;
-  video.oncanplay = () => video.play().then(() => { video._rafId = requestAnimationFrame(watch); }).catch(doFreeze);
-  video.src = 'video/scene7x.mp4';
-  video.currentTime = 0;
-  video.load();
+  document.getElementById('board-session-id').textContent = G.sessionId;
+  document.getElementById('board-proj-title').textContent = G.title;
+  document.getElementById('boardroom-pitch').value = '';
+  document.getElementById('board-char-count').textContent = '0 / min. 80 car.';
+
+  // Re-déclencher l'animation zoom de l'image de fond
+  const img = room.querySelector('.board-bg-img');
+  img.style.animation = 'none'; img.offsetHeight; img.style.animation = '';
+
+  // ── Rappel des 6 angles
+  buildAngleReminder();
 }
 
 document.getElementById('boardroom-pitch').addEventListener('input', function() {
@@ -1822,12 +1924,30 @@ async function showVerdict(pitch) {
 
   const video   = document.getElementById('verdict-video');
   const overlay = document.getElementById('verdict-overlay');
+
+  // ── Étape 1 : jouer la vidéo d'entrée dans la salle (anciennement showBoardroom)
+  overlay.style.display = 'none';
+  video.loop = false; video.muted = false;
+  video.src = 'video/scene7x.mp4';
+  video.load();
+  await new Promise(resolve => {
+    let settled = false;
+    function done() { if (settled) return; settled = true; resolve(); }
+    video.onended = done;
+    video.onerror = done;
+    video.oncanplay = () => video.play().catch(done);
+    setTimeout(done, 15000); // filet de sécurité
+  });
+
+  // ── Étape 2 : délibération — vidéo de réaction en boucle + appel IA
   overlay.style.display = 'flex';
   document.getElementById('verdict-avg-row').classList.remove('visible');
-  const decEl = document.getElementById('verdict-decision-el');
+  const decEl     = document.getElementById('verdict-decision-el');
+  const summaryEl = document.getElementById('verdict-summary-text');
   decEl.classList.remove('visible','accord','refus');
+  summaryEl.classList.remove('visible');
+  summaryEl.style.display = 'none';
 
-  // Vidéo de réaction en boucle pendant les scores
   video.src = 'video/Scene8x.mp4';
   video.loop = true; video.muted = false;
   video.load(); video.play().catch(() => {});
@@ -1846,6 +1966,14 @@ async function showVerdict(pitch) {
 
   decEl.textContent = won ? '✓  ACCORD — PROJET APPROUVÉ' : '✗  REFUS — CONCEPT À REVOIR';
   decEl.classList.add('visible', won ? 'accord' : 'refus');
+
+  // ── Afficher le texte de verdict (nuance) ──
+  if (scores.verdict) {
+    summaryEl.textContent = scores.verdict;
+    summaryEl.style.display = 'block';
+    await delay(300);
+    summaryEl.classList.add('visible');
+  }
   await delay(2200);
 
   // Si refus : afficher la rétroaction avant la vidéo de conclusion
@@ -1947,15 +2075,25 @@ async function callGeminiDragonsDen(pitch) {
     ? apiUrl
     : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
 
-  const prompt = `Tu es un panel d'investisseurs Dragon's Den spécialisés en design graphique. Un étudiant présente son concept révisé après les rétroactions des 6 chapeaux de De Bono.\n\nTitre: "${G.title}"\nConcept original: "${G.brief}"\nRétroactions reçues:\n${feedbackCtx}\nPitch final: "${pitch}"\n\nÉvalue si l'étudiant a intégré les rétroactions. Retourne UNIQUEMENT un JSON valide (sans markdown):\n{"noir":<0-100>,"rouge":<0-100>,"jaune":<0-100>,"blanc":<0-100>,"vert":<0-100>,"bleu":<0-100>}`;
+  const prompt = `Tu es un panel bienveillant d'évaluateurs en design graphique. Tu évalues le pitch final d'un·e étudiant·e selon la méthode des six chapeaux de De Bono.\n\nProjet : "${G.title}"\nConcept : "${G.brief}"\nRétroactions reçues durant le parcours :\n${feedbackCtx}\nPitch final : "${pitch}"\n\nGRILLE DE NOTATION (c'est un exercice pédagogique — sois généreux·se) :\n- 80 à 90 : pitch solide qui aborde clairement plusieurs angles des 6 chapeaux\n- 68 à 79 : pitch cohérent avec une réflexion réelle, même si certains angles sont peu développés\n- 60 à 67 : pitch acceptable mais vague ou générique sur plusieurs angles\n- Moins de 60 : pitch trop court, hors sujet ou sans lien avec le projet\n\nÉvalue si le pitch aborde L'ANGLE de chaque chapeau (pas besoin de citer la rétroaction exacte) :\n- noir : risques ou contraintes anticipés ?\n- rouge : émotion ou impact visuel exprimé ?\n- jaune : valeur ou bénéfices pour le client articulés ?\n- blanc : choix appuyés sur des faits ou observations ?\n- vert : démarche créative ou choix stylistiques visibles ?\n- bleu : démarche et prochaines étapes claires ?\n\nAjoute aussi un champ "verdict" : 1 à 2 phrases qui expliquent POURQUOI le projet est accepté ou refusé, en nommant les forces et les failles principales du pitch.\n\nRetourne UNIQUEMENT un JSON valide (sans markdown) :\n{"noir":<0-100>,"rouge":<0-100>,"jaune":<0-100>,"blanc":<0-100>,"vert":<0-100>,"bleu":<0-100>,"verdict":"<1-2 phrases>"}`;
   try {
     const res  = await fetch(url,
       { method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }], generationConfig: { thinkingConfig: { thinkingBudget: 0 } } }) });
     const data = await res.json();
-    const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-    return JSON.parse(raw.replace(/```json?|```/g,'').trim());
-  } catch { return { noir:62, rouge:68, jaune:71, blanc:65, vert:58, bleu:64 }; }
+    const raw    = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    const parsed = JSON.parse(raw.replace(/```json?|```/g,'').trim());
+
+    // Plancher 65% pour les chapeaux que le joueur a validés (MONTEZ)
+    const passedIds = new Set(G.results.filter(r => r.decision === 'MONTEZ').map(r => r.persona.id));
+    ['noir','rouge','jaune','blanc','vert','bleu'].forEach(id => {
+      if (passedIds.has(id)) parsed[id] = Math.max(parsed[id] ?? 60, 65);
+    });
+
+    return parsed;
+  } catch {
+    return { noir:68, rouge:71, jaune:70, blanc:67, vert:65, bleu:69, verdict:'Le concept montre une réflexion intéressante mais manque de précision sur certains angles clés de la méthode De Bono.' };
+  }
 }
 
 // ============================================================
